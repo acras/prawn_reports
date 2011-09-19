@@ -1,6 +1,6 @@
 #coding: utf-8
 
-require File.expand_path(File.dirname(__FILE__) + "/header_band")
+require File.expand_path(File.dirname(__FILE__) + "/../../../lib/bands/header_band")
 
 module PrawnReport
 
