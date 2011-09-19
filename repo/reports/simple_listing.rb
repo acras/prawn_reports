@@ -24,10 +24,17 @@ module PrawnReport
       elsif @params[:columns]
         render_multi_column_title
       end
+      filling_colors = ['cccccc', 'ffffff'].cycle
       @data['items'].each do |row|
         new_page unless fits?(15)
+        #background color
+        @x = 0
+        @pdf.fill_color filling_colors.next
+        @pdf.fill_rectangle [x,y], max_width, 15
+        @pdf.fill_color '000000'
+        #line itself
         render_line(row)
-        line_break(15)
+        line_break(13)
       end
     end
     
@@ -41,27 +48,27 @@ module PrawnReport
     
     def render_one_column_title
       if @params[:title]
-        text(@params[:title], @max_width, :font_size => 14, :style => :bold)
-        line_break(15)
+        text(@params[:title], @max_width, :font_size => 12, :style => :bold)
+        line_break(13)
       end
     end
     
     def render_multi_column_title
       @params[:columns].each do |c|
         width = c[:width] || 60
-        text(c[:title].to_s, width, :font_size => 14, :style => :bold)  
+        text(c[:title].to_s, width, :font_size => 12, :style => :bold)  
       end      
-      line_break(15)
+      line_break(13)
     end
     
     def render_one_column_line(row)
-      text(row[@params[:field]], 100, :font_size => 14)
+      text(row[@params[:field]], 100, :font_size => 12)
     end
     
     def render_multi_column_line(row)
       @params[:columns].each do |c|
         width = c[:width] || 60
-        text(row[c[:name].to_s].to_s, width, :font_size => 14)  
+        text(row[c[:name].to_s].to_s, width, :font_size => 12)  
       end      
     end
     
