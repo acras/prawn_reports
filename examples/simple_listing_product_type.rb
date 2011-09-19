@@ -4,7 +4,6 @@ require 'prawn_report.rb'
 require 'yaml'
 
 class ProductTypeListing < PrawnReport::SimpleListing
-  
   def initialize
     super
     @params = {
@@ -12,7 +11,6 @@ class ProductTypeListing < PrawnReport::SimpleListing
       :listing_column => 'name'
     }
   end
-  
 end
 
 data = YAML::load( File.open( File.expand_path(File.dirname(__FILE__) + "/data/product_types.yml") ) )

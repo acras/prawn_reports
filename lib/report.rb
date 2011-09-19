@@ -8,6 +8,7 @@ require File.expand_path(File.dirname(__FILE__) + "/report_info")
 # This is the module for all classes in the prawn_report gem
 module PrawnReport
 
+  #Will be passed to pdf constructor, default page size is A4
   PAGE_SIZE = 'A4'
   DEFAULT_PAGE_LAYOUT = :portrait
   MARGIN = [20, 20, 20, 20] # [top, right, bottom, left]
