@@ -5,6 +5,7 @@ require 'prawn'
 require File.expand_path(File.dirname(__FILE__) + "/report_helpers")
 require File.expand_path(File.dirname(__FILE__) + "/report_info")
 
+# This is the module for all classes in the prawn_report gem
 module PrawnReport
 
   PAGE_SIZE = 'A4'
@@ -23,6 +24,8 @@ module PrawnReport
   TEXT_BOX_RADIUS = 2
   TEXT_BOX_HEIGTH = 20
   
+  # Report is the base class for all reports, it encapsulates all logic for rendering
+  #   report parts.
   class Report
     attr_reader :pdf, :data, :max_width, :max_height
     attr_accessor :header_class, :x, :params
