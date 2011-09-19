@@ -1,6 +1,9 @@
 #coding: utf-8
 
-require 'prawn_report.rb'
+#require 'prawn_report.rb'
+
+require File.expand_path(File.dirname(__FILE__) + "/../lib/prawn_report")
+
 require 'yaml'
 
 class ProductTypeListing < PrawnReport::SimpleListing
@@ -8,7 +11,8 @@ class ProductTypeListing < PrawnReport::SimpleListing
     super
     @params = {
       :report_name => 'Product Type Listing', 
-      :listing_column => 'name'
+      :field => 'name',
+      :title => 'Name'
     }
   end
 end

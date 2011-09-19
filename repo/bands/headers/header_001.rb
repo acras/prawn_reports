@@ -14,14 +14,14 @@ module PrawnReport
       report.text(txt_emissao, length, :font_size => 12, 
         :valign => :bottom, :align => :right)
       report.line_break(16)
-      report.text(report.params[:report_name], report.max_width, :font_size => 10, 
+      report.text(report.params[:report_name], report.max_width, :font_size => 13, 
          :align => :center)
-      report.line_break(11)
+      report.line_break(13)
       report.horizontal_line
     end
     
     def self.height
-      50
+      55
     end
         
   end

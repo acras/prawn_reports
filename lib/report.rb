@@ -29,7 +29,7 @@ module PrawnReport
   #   report parts.
   class Report
     attr_reader :pdf, :data, :max_width, :max_height
-    attr_accessor :header_class, :x, :params
+    attr_accessor :header_class, :header_other_pages_class, :x, :params
     
     def initialize
       @num_pages = 1
@@ -50,6 +50,7 @@ module PrawnReport
       @pdf.move_cursor_to(max_height - MARGIN[2])
       
       @header_class = nil
+      @header_other_pages_class = nil
     end
     
     def draw(data)
@@ -88,9 +89,9 @@ module PrawnReport
     
     def draw_header(klass)
       if klass
-        header = @header_class.new(self)
+        header = klass.new(self)
         header.draw
-        @pdf.y = @max_height - @header_class.height
+        @pdf.y = @max_height - klass.height
         @x = 0
       end
     end

@@ -9,8 +9,6 @@ module PrawnReport
     def internal_draw
       report.horizontal_line
       report.x = 0
-      report.text('Gerado pelo sistema StockFin', report.max_width, 
-        :font_size => 10, :align => :left)
     end
     
     def self.height
