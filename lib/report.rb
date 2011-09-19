@@ -25,7 +25,7 @@ module PrawnReport
   
   class Report
     attr_reader :pdf, :data, :max_width, :max_height
-    attr_accessor :header_class, :x
+    attr_accessor :header_class, :x, :params
     
     def initialize
       @num_pages = 1
