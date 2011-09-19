@@ -7,6 +7,64 @@ require File.expand_path(File.dirname(__FILE__) + "/../bands/footers/footer_001.
 
 
 module PrawnReport
+  #Generates a listing report with or without multiple columns.
+  #
+  #==Creating a SimpleListing Report
+  #To create a simple listing report you must inherit from PrawnReport::SimpleListing class
+  #and fill some parameters. The +report_name+ parameter is mandatory. The other parameters depends
+  #if you want a single or multi column listing.
+  #
+  #The parameters are filled setting the instance variable +params+ hash in initialize after calling
+  #super.
+  #
+  #==Single column listing
+  #For single column listings you must fill the +field+ parameter and, optionally, the +title+
+  #parameter. Like the code bellow
+  #  class ProductTypeListing < PrawnReport::SimpleListing
+  #    def initialize
+  #      super
+  #      @params = {
+  #        :report_name => 'Product Type Listing', 
+  #        :field => 'name',
+  #        :title => 'Name'
+  #      }
+  #    end
+  #  end
+  #
+  #==Multiple column listing
+  #To have a multiple column listing you must fill the +columns+ hash inside +params+ hash. Each column
+  #has the following properties:
+  #* +name+: The name of the field
+  #* +title+: The title to be rendered above the first row
+  #* +width+: The width of the column. Default value is 60
+  #
+  #The code belloow shows a listing of people with 3 columns
+  #
+  #  class PeopleListing < PrawnReport::SimpleListing
+  #    def initialize
+  #      super
+  #      @params = {
+  #        :report_name => 'People Listing', 
+  #        :columns => [
+  #          {:name => 'name', :title => 'Name', :width => 200},
+  #          {:name => 'age', :title => 'Age', :width => 30},
+  #          {:name => 'phone_number', :title => 'Phone #', :width => 100}
+  #        ]
+  #      }
+  #    end
+  #  end
+  #
+  #==Default behaviour
+  #The listing bellow shows the default behaviour of this class. This is not changeable at this
+  #momment. Any of this behaviour can become changeable in future versions of this gem.
+  #
+  #* Font: size 12. normal. Times-Roman
+  #* Row background color: Alternate between white and gray (cccccc)
+  #* First page Header class: PrawnReport::Header001
+  #* Other pages Header class: PrawnReport::Header002
+  #* Footer class: PrawnReport::Footer001
+
+
   class SimpleListing < Report
 
     def initialize
