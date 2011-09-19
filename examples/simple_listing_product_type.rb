@@ -1,6 +1,6 @@
 #coding: utf-8
 
-require 'report_helpers.rb'
+require 'prawn_report.rb'
 
 class ProductTypeListing < PrawnReport::SimpleListing
   
