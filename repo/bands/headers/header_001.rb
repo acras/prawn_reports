@@ -23,11 +23,26 @@ module PrawnReport
       report.text(report.params[:report_name], report.max_width, :font_size => 13, 
          :align => :center)
       report.line_break(13)
+      draw_filters if report.params[:filters]
       report.horizontal_line
     end
     
-    def self.height
-      55
+    def draw_filters
+      report.params[:filters].each do |param|
+        title = param[0]
+        if param[1].to_s != ''
+          title = title + ':'
+        end
+        report.text(title, 2 + report.pdf.width_of(title, :size => 10), :font_size => 10)
+        report.text(param[1], 2 + report.pdf.width_of(param[1], :size => 10), :font_size => 10)
+        report.line_break(10)
+      end
+    end
+    
+    def height
+      filter_count = 0
+      report.params[:filters].count if report.params[:filters]
+      55 + 10 * filter_count
     end
         
   end

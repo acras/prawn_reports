@@ -91,7 +91,7 @@ module PrawnReport
       if klass
         header = klass.new(self)
         header.draw
-        @pdf.y = @max_height - klass.height
+        @pdf.y = @max_height - header.height
         @x = 0
       end
     end

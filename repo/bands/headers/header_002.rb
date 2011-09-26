@@ -22,7 +22,7 @@ module PrawnReport
       report.horizontal_line
     end
     
-    def self.height
+    def height
       20
     end
     

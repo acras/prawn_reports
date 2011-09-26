@@ -21,7 +21,3 @@ class PeopleListing < PrawnReport::SimpleListing
     }
   end
 end
-
-data = YAML::load( File.open( File.expand_path(File.dirname(__FILE__) + "/data/people.yml") ) )
-f = PeopleListing.new
-puts f.draw(data)
