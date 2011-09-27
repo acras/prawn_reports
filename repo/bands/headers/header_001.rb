@@ -10,6 +10,10 @@ module PrawnReport
   #  font size 16.
   #* Data de emissão dated today right aligned font size 12
   #* Report name based on a parameter named +report_name+ setted in the report
+  #* A list of filters read from *report.params[:filters]*. Each filter is printed in one
+  #  line. *params[:filters]* must be an array of arrays where the inner arrays must be
+  #  tuples of two elements, the first one being the title and second one being the value of the 
+  #  filter. If value is present the title is concatenated with ':'
   class Header001 < HeaderBand
     
     def internal_draw
@@ -41,8 +45,8 @@ module PrawnReport
     
     def height
       filter_count = 0
-      report.params[:filters].count if report.params[:filters]
-      55 + 10 * filter_count
+      filter_count = report.params[:filters].count if report.params[:filters]
+      45 + 10 * filter_count
     end
         
   end

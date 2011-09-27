@@ -67,8 +67,8 @@ module PrawnReport
 
   class SimpleListing < Report
 
-    def initialize
-      super
+    def initialize(params = {})
+      super(params)
       @header_class = PrawnReport::Header001
       @header_other_pages_class = PrawnReport::Header002       
       @footer_class = PrawnReport::Footer001

@@ -2,7 +2,7 @@ module PrawnReport
   class Report
 
     def fits?(h)
-      (y - footer_size - h - MARGIN[2]) > 0 
+      (y - footer_size - h - @report_params[:margin][2]) > 0 
     end
     
     def header_size

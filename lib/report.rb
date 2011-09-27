@@ -12,6 +12,8 @@ module PrawnReport
   PAGE_SIZE = 'A4'
   DEFAULT_PAGE_LAYOUT = :portrait
   MARGIN = [20, 20, 20, 20] # [top, right, bottom, left]
+  DEFAULT_REPORT_PARAMS = {:page_size => PAGE_SIZE, :margin => MARGIN,
+    :page_layout => DEFAULT_PAGE_LAYOUT}
   
   LABEL_SIZE = 6
   TEXT_SIZE = 10
@@ -31,23 +33,26 @@ module PrawnReport
     attr_reader :pdf, :data, :max_width, :max_height
     attr_accessor :header_class, :header_other_pages_class, :x, :params
     
-    def initialize
+    def initialize(params = {})
       @num_pages = 1
       
-      @pdf = Prawn::Document.new(:page_size => PAGE_SIZE, :margin => MARGIN,
-            :page_layout => DEFAULT_PAGE_LAYOUT)
+      @report_params = DEFAULT_REPORT_PARAMS.merge(params)
+      @pdf = Prawn::Document.new(@report_params)
         
       @pdf.font(DEFAULT_FONT)
       @pdf.line_width = LINE_WIDTH
-      @pdf.move_cursor_to(50 - MARGIN[2])
       
-      w, h = *Prawn::Document::PageGeometry::SIZES[PAGE_SIZE]
+      if @report_params[:page_layout] == :portrait
+        w, h = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+      else
+        h, w = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+      end
       @x = 0
-      @y = @max_height = h - (MARGIN[0] + MARGIN[2])
-      @max_width = w - (MARGIN[1] + MARGIN[3])
+      @y = @max_height = h - (@report_params[:margin][0] + @report_params[:margin][2])
+      @max_width = w - (@report_params[:margin][1] + @report_params[:margin][3])
 
       @footer_size = 0
-      @pdf.move_cursor_to(max_height - MARGIN[2])
+      @pdf.move_cursor_to(max_height - @report_params[:margin][2])
       
       @header_class = nil
       @header_other_pages_class = nil
@@ -72,7 +77,7 @@ module PrawnReport
       @num_pages += 1
       @pdf.start_new_page
       @x = 0
-      @pdf.move_down(MARGIN[0])
+      @pdf.move_down(@report_params[:margin][0])
       
       draw_header_other_pages
     end
