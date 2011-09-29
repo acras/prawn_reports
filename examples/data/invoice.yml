@@ -1,0 +1,11 @@
+company_name: Labtech Análises Clínicas
+items:
+- product: T-Shirt
+  quantity: 1
+  unit_price: 24.99
+- product: Pants
+  quantity: 2
+  unit_price: 39.99
+total_quantity: 3
+total_price: 64.98
+

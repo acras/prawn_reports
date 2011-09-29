@@ -54,8 +54,7 @@ module PrawnReport
       @footer_size = 0
       @pdf.move_cursor_to(max_height - @report_params[:margin][2])
       
-      @header_class = nil
-      @header_other_pages_class = nil
+      @header_class = @header_other_pages_class = @summary_band_class =  @footer_class = nil
     end
     
     def draw(data)
@@ -63,6 +62,7 @@ module PrawnReport
       
       draw_header_first_page
       draw_internal
+      draw_summary
       draw_footer
       
       second_pass
@@ -107,7 +107,14 @@ module PrawnReport
         @pdf.move_cursor_to(@footer_class.height)
         footer.draw
       end
-    end      
+    end
+    
+    def draw_summary
+      if @summary_class
+        summary = @summary_class.new(self)
+        summary.draw
+      end
+    end
 
     def second_pass
     
