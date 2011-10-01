@@ -104,7 +104,7 @@ module PrawnReport
       end
     end
     
-    def render_one_column_title
+    def  render_one_column_title
       if @params[:title]
         text(@params[:title], @max_width, :font_size => 12, :style => :bold)
         line_break(13)
@@ -114,7 +114,8 @@ module PrawnReport
     def render_multi_column_title
       @params[:columns].each do |c|
         width = c[:width] || 60
-        text(c[:title].to_s, width, :font_size => 12, :style => :bold)  
+        align = c[:align] || :left
+        text(c[:title].to_s, width, :font_size => 12, :style => :bold, :align => align)  
       end      
       line_break(13)
     end
@@ -126,8 +127,20 @@ module PrawnReport
     def render_multi_column_line(row)
       @params[:columns].each do |c|
         width = c[:width] || 60
-        text(row[c[:name].to_s].to_s, width, :font_size => 12)  
+        formatter = c[:formatter] || :none
+        formatted_text = format(row[c[:name].to_s], formatter)
+        align = c[:align] || :left
+        font_size = c[:font_size] || 12
+        text(formatted_text, width, :font_size => font_size, :align => align)  
       end      
+    end
+    
+    def format(value, formatter)
+      if (formatter == :currency)
+        return (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%d' % (value * 100 % 100))
+      else
+        return value.to_s
+      end
     end
     
     def second_pass
