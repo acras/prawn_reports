@@ -6,6 +6,15 @@ items:
 - product: Pants
   quantity: 2
   unit_price: 39.99
+- product: Belt
+  quantity: 10
+  unit_price: 9.99
+- product: Blue Bird Shirt
+  quantity: 4
+  unit_price: 10.99
+- product: Shoes
+  quantity: 2
+  unit_price: 109.99
 total_quantity: 3
 total_price: 64.98
 

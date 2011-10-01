@@ -93,6 +93,7 @@ module PrawnReport
         #line itself
         render_line(row)
         line_break(13)
+        run_totals(row)
       end
     end
     

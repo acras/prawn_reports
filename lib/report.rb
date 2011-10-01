@@ -30,10 +30,12 @@ module PrawnReport
   # Report is the base class for all reports, it encapsulates all logic for rendering
   #   report parts.
   class Report
-    attr_reader :pdf, :data, :max_width, :max_height
-    attr_accessor :header_class, :header_other_pages_class, :x, :params
+    attr_reader :pdf, :data, :max_width, :max_height, :totals
+    attr_accessor :header_class, :header_other_pages_class, :x, :params,
+      :running_totals
     
     def initialize(params = {})
+      @running_totals = params.delete(:running_totals) || []
       @num_pages = 1
       
       @report_params = DEFAULT_REPORT_PARAMS.merge(params)
@@ -55,6 +57,9 @@ module PrawnReport
       @pdf.move_cursor_to(max_height - @report_params[:margin][2])
       
       @header_class = @header_other_pages_class = @summary_band_class =  @footer_class = nil
+      @totals = {}
+      
+      initialize_running_totals
     end
     
     def draw(data)
@@ -118,6 +123,18 @@ module PrawnReport
 
     def second_pass
     
+    end
+    
+    def run_totals(data_row)
+      @running_totals.each do |rt|
+        @totals[rt] = (@totals[rt] || 0) + data_row[rt]
+      end
+    end
+    
+    def initialize_running_totals
+      @running_totals.each do |rt|
+        @totals[rt] = 0
+      end
     end
           
   end
