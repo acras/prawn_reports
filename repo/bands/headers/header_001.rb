@@ -18,7 +18,7 @@ module PrawnReport
     
     def internal_draw
       report.text(report.data['company_name'], 300, :style => :bold, :font_size => 16)
-      txt_emissao = 'Data de emissão: ' + Date.today.strftime('%d/%m/%Y')
+      txt_emissao = 'Data de emissão: ' + report.today.strftime('%d/%m/%Y')
       length = report.pdf.width_of(txt_emissao, :size => 12)
       report.x = report.max_width - length
       report.text(txt_emissao, length, :font_size => 12, 

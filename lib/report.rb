@@ -30,7 +30,7 @@ module PrawnReport
   # Report is the base class for all reports, it encapsulates all logic for rendering
   #   report parts.
   class Report
-    attr_reader :pdf, :data, :max_width, :max_height, :totals
+    attr_reader :pdf, :data, :max_width, :max_height, :totals, :group_totals
     attr_accessor :header_class, :header_other_pages_class, :x, :params,
       :running_totals
     
@@ -58,6 +58,7 @@ module PrawnReport
       
       @header_class = @header_other_pages_class = @summary_band_class =  @footer_class = nil
       @totals = {}
+      @group_totals = {}
       
       initialize_running_totals
     end
@@ -120,6 +121,20 @@ module PrawnReport
         summary.draw
       end
     end
+    
+    def draw_group_summary
+      if @params[:group] && @params[:group][:summary_class]
+        summary = @params[:group][:summary_class].new(self)
+        summary.draw
+      end
+    end
+
+    def draw_group_header
+      if @params[:group][:header_class]
+        header = @params[:group][:header_class].new(self)
+        header.draw
+      end
+    end
 
     def second_pass
     
@@ -128,12 +143,20 @@ module PrawnReport
     def run_totals(data_row)
       @running_totals.each do |rt|
         @totals[rt] = (@totals[rt] || 0) + data_row[rt]
+        @group_totals[rt] = (@group_totals[rt] || 0) + data_row[rt]
       end
     end
-    
+
     def initialize_running_totals
       @running_totals.each do |rt|
         @totals[rt] = 0
+        @group_totals[rt] = 0
+      end
+    end
+
+    def reset_group_totals
+      @running_totals.each do |rt|
+        @group_totals[rt] = 0
       end
     end
           

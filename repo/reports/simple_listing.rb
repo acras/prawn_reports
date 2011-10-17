@@ -67,34 +67,33 @@ module PrawnReport
 
   class SimpleListing < Report
 
+    attr_reader :grouping_info
+    
     def initialize(params = {})
       super(params)
       @header_class = PrawnReport::Header001
       @header_other_pages_class = PrawnReport::Header002       
       @footer_class = PrawnReport::Footer001
+      @grouping_info = {:last_group_value => nil, 
+                        :groups_runing => false}
     end
     
     protected
     
     def draw_internal
-      if @params[:field]
-        render_one_column_title
-      elsif @params[:columns]
-        render_multi_column_title
-      end
       filling_colors = ['cccccc', 'ffffff'].cycle
       @data['items'].each do |row|
         new_page unless fits?(15)
-        #background color
+        run_groups(row) if grouped?
         @x = 0
         @pdf.fill_color filling_colors.next
         @pdf.fill_rectangle [x,y], max_width, 15
         @pdf.fill_color '000000'
-        #line itself
         render_line(row)
         line_break(13)
         run_totals(row)
       end
+      draw_group_summary if @data['items'].count > 0
     end
     
     def render_line(row)
@@ -151,6 +150,36 @@ module PrawnReport
         @x = 0
         text("Página #{@pdf.page_number}/#{@pdf.page_count}", @max_width, :align => :right)
       end
+    end
+    
+    def run_groups(row)
+      start_new_group = !@grouping_info[:groups_running]
+      start_new_group |=  row[params[:group][:field]] != @grouping_info[:last_group_value]
+      if start_new_group
+        if (params[:group][:new_page] && 
+                     @grouping_info[:groups_running] &&
+                     @grouping_info[:last_group_value] != row[params[:group][:field]])
+          draw_group_summary
+          new_page
+        end
+        @grouping_info[:last_group_value] = row[params[:group][:field]]
+        @grouping_info[:groups_running] = true
+        draw_group_header
+        draw_column_titles
+        reset_group_totals
+      end
+    end
+    
+    def draw_column_titles
+      if @params[:field]
+        render_one_column_title
+      elsif @params[:columns]
+        render_multi_column_title
+      end
+    end
+    
+    def grouped?
+      params[:group]
     end
   end
 end

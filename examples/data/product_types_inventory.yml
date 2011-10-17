@@ -2,41 +2,62 @@ company_name: Labtech Análises Clínicas
 items:
 - name: Shirt
   group: Clothing
+  quantity: 1
 - name: T-Shirt
   group: Clothing
+  quantity: 3
 - name: Pant
   group: Clothing
+  quantity: 5
 - name: SweatPant
   group: Clothing
+  quantity: 34
 - name: Jeans
   group: Clothing
+  quantity: 54
 - name: Sweater
   group: Clothing
+  quantity: 123
 - name: Top
   group: Clothing
+  quantity: 345
 - name: Dress
   group: Clothing
+  quantity: 443
 - name: Arc
   group: Accessories
+  quantity: 123
 - name: Necklace
   group: Accessories
+  quantity: 751
 - name: Belt
   group: Accessories
+  quantity: 236
 - name: Flip Flop
   group: Accessories
+  quantity: 15
 - name: Knit Cap
   group: Accessories
+  quantity: 155
 - name: Hat
   group: Accessories
+  quantity: 0
 - name: Scarf
   group: Accessories
+  quantity: 67
 - name: Soft Scarf
   group: Accessories
+  quantity: 81
 - name: Shoes
   group: Shoes
+  quantity: 30
 - name: High Heel Shoes
   group: Shoes
+  quantity: 144
 - name: Sandal
   group: Shoes
+  quantity: 124
 - name: Socks
-  group: Shoes  
+  group: Shoes    
+  quantity: 91
+
