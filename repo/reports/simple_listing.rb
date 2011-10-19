@@ -82,6 +82,7 @@ module PrawnReport
     
     def draw_internal
       filling_colors = ['cccccc', 'ffffff'].cycle
+      draw_column_titles unless grouped?
       @data['items'].each do |row|
         new_page unless fits?(15)
         run_groups(row) if grouped?
