@@ -18,7 +18,7 @@ module PrawnReport
     def text(text, width, options = {})
       font_size = options[:font_size] || TEXT_SIZE
       @pdf.text_box(text, :size => font_size, :style => options[:style], :at => [@x, y - 4],
-            :width => width, :height => font_size, 
+            :width => width, :height => @pdf.height_of(text, :size => font_size), 
             :valign => (options[:valign] || :top),
             :align => (options[:align] || :left)
             )
@@ -43,6 +43,14 @@ module PrawnReport
       @x = 0
       @pdf.move_down(@pdf.height_of('A', :size => size) + 2)
     end
+  
+    def format(value, formatter)
+      if (formatter == :currency)
+        return (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%d' % (value * 100 % 100))
+      else
+        return value.to_s
+      end
+    end	
 
   end
 end

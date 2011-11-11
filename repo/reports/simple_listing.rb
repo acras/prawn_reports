@@ -76,18 +76,18 @@ module PrawnReport
       @footer_class = PrawnReport::Footer001
       @grouping_info = {:last_group_value => nil, 
                         :groups_runing => false}
+      @filling_colors = ['cccccc', 'ffffff'].cycle
     end
     
     protected
     
     def draw_internal
-      filling_colors = ['cccccc', 'ffffff'].cycle
       draw_column_titles unless grouped?
       @data['items'].each do |row|
         new_page unless fits?(15)
         run_groups(row) if grouped?
         @x = 0
-        @pdf.fill_color filling_colors.next
+        @pdf.fill_color @filling_colors.next
         @pdf.fill_rectangle [x,y], max_width, 15
         @pdf.fill_color '000000'
         render_line(row)
@@ -116,7 +116,8 @@ module PrawnReport
       @params[:columns].each do |c|
         width = c[:width] || 60
         align = c[:align] || :left
-        text(c[:title].to_s, width, :font_size => 12, :style => :bold, :align => align)  
+        text(c[:title].to_s, width, :font_size => 12, :style => :bold, :align => align) 
+        space(3)
       end      
       line_break(13)
     end
@@ -132,17 +133,10 @@ module PrawnReport
         formatted_text = format(row[c[:name].to_s], formatter)
         align = c[:align] || :left
         font_size = c[:font_size] || 12
-        text(formatted_text, width, :font_size => font_size, :align => align)  
+        text(formatted_text, width, :font_size => font_size, :align => align)
+        space(3)
       end      
-    end
-    
-    def format(value, formatter)
-      if (formatter == :currency)
-        return (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%d' % (value * 100 % 100))
-      else
-        return value.to_s
-      end
-    end
+    end    
     
     def second_pass
       1.upto(@num_pages) do |i|
