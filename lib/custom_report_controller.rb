@@ -1,13 +1,35 @@
 #coding: utf-8
 
-module PrawnReportActiveRecord
+module PrawnReportController
   
-  #tem que ter um jeito de este cara configurar
-  # -qual a classe que ele busca
-  # -como ele filtra esta classe (Rails 2 e Rails 3 issues)
-  # 
-  #show recebe parâmetros da busca e devolve um PDF
-  # Fazer um esquema pra mandar o report por e-mail.
-  #
+  def get_pr_report_data
+    []
+  end
+    
+  def get_pr_report_class
+    @pr_report_class
+  end
+    
+  def get_pr_suggested_filename
+    @pr_suggested_filename || 'relatorio.pdf'
+  end
   
-end
+  def get_pr_report_params
+    @pr_report_params || {}
+  end
+  
+  def get_pr_serialization_params
+    @serialization_params || {}
+  end
+  
+  def index
+    rec = get_pr_report_data
+    report_content = rec.pr_serialize(get_pr_serialization_params)
+    report = get_pr_report_class.new(get_pr_report_params)
+    
+    report_content = report.draw(report_content.get_yaml)
+
+    send_data(report_content, :filename => get_pr_suggested_filename)
+  end
+  
+end 

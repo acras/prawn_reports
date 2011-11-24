@@ -34,11 +34,11 @@ module PrawnReport
     attr_accessor :header_class, :header_other_pages_class, :x, :params,
       :running_totals
     
-    def initialize(params = {})
-      @running_totals = params.delete(:running_totals) || []
+    def initialize(report_params = {})
+      @running_totals = report_params.delete(:running_totals) || []
       @num_pages = 1
       
-      @report_params = DEFAULT_REPORT_PARAMS.merge(params)
+      @report_params = DEFAULT_REPORT_PARAMS.merge(report_params)
       @pdf = Prawn::Document.new(@report_params)
         
       @pdf.font(DEFAULT_FONT)

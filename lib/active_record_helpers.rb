@@ -12,13 +12,15 @@ class ActiveRecordYAMLSerializer
   end
   
   def serialize
-    serialize_root_values(@params)
-
+    @contents = ''
+    @contents += serialize_root_values(@params)
+    
     if @obj.is_a? ActiveRecord::Base
-      @contents = serialize_record(@obj, @params)
+      @contents += serialize_record(@obj, @params)
     elsif @obj.is_a? Array
       @contents += "itens:\n"
       @obj.each do |item|
+        reset_indent
         indent
         @contents += serialize_record(item, @params)  
       end
@@ -43,9 +45,15 @@ class ActiveRecordYAMLSerializer
     @indent_level += 1
   end
   
+  def reset_indent(level = 0)
+    @indent_level = level
+  end
+  
   def serialize_root_values(params)
+    r = ''
     params[:root_values] ||= {}
-    params[:root_values].each_pair { |k,v| @contents += serialize_key_value(k,v) }
+    params[:root_values].each_pair { |k,v| r += serialize_key_value(k,v) }
+    r
   end
   
   def serialize_record(rec, params = {})
@@ -83,12 +91,12 @@ class ActiveRecordYAMLSerializer
       r += "|-\n"
       s.lines.each do |l|
         r += '  ' * (@indent_level + 1)
-        r += l + "\n"
+        r += l
       end
     else
-      r += s + "\n"
+      r += '"' + s.to_s + '"'
     end
-    r
+    r + "\n"
   end
   
   def render_indent_first_line
@@ -115,7 +123,9 @@ class ActiveRecordYAMLSerializer
       if type == :fields
         v[:fields].each do |f|
           r += render_indent(first_line)
-          r += k.to_s + '_' + f.to_s + ': ' + rec.send(k).send(f).to_s + "\n"
+          master_rec = rec.send(k)
+          val = master_rec ? master_rec.send(f) : nil
+          r += serialize_key_value(k.to_s + '_' + f.to_s, val)
           first_line = false
         end
       end
@@ -125,17 +135,31 @@ class ActiveRecordYAMLSerializer
 
   def serialize_has_manys(rec, first_line, params)
     r = ''
-    rec.class.reflect_on_all_associations(:has_many).collect do |hm|
+    params[:included_has_many] ||= {}
+    params[:included_has_many].each_pair do |k,v|
       r += render_indent(first_line)
-      r += hm.name.to_s + ":\n"
-      rec.send(hm.name).each do |det|
-        indent
-        r += serialize_record(det, params[:detail_params][hm.name.to_sym] || {})
-      end
+      r += hm.name.to_s + ":"
+      r += serialize_has_many(rec.send(k), v)
       first_line = false
     end
     r
-  end  
+  end
+  
+  def serialize_has_many(hm, params)
+    original_indent = @indent_level
+    r = ''
+    if hm.count == 0
+      r += " []\n"
+    else
+      r += "\n"
+      hm.each do |det|
+        reset_indent(original_indent)
+        indent
+        r += serialize_record(det, params || {})
+      end
+    end
+    r
+  end
   
 end
 

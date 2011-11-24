@@ -69,8 +69,8 @@ module PrawnReport
 
     attr_reader :grouping_info
     
-    def initialize(params = {})
-      super(params)
+    def initialize(report_params = {})
+      super(report_params)
       @header_class = PrawnReport::Header001
       @header_other_pages_class = PrawnReport::Header002       
       @footer_class = PrawnReport::Footer001
@@ -83,7 +83,8 @@ module PrawnReport
     
     def draw_internal
       draw_column_titles unless grouped?
-      @data['items'].each do |row|
+      detail_name = @params[:detail_name] || 'items'
+      @data[detail_name].each do |row|
         new_page unless fits?(15)
         run_groups(row) if grouped?
         @x = 0
@@ -94,7 +95,7 @@ module PrawnReport
         line_break(13)
         run_totals(row)
       end
-      draw_group_summary if @data['items'].count > 0
+      draw_group_summary if @data[detail_name].count > 0
     end
     
     def render_line(row)
