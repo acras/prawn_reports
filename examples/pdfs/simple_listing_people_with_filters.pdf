@@ -6,8 +6,8 @@
 >>
 endobj
 2 0 obj
-<< /Type /Catalog
-/Pages 3 0 R
+<< /Pages 3 0 R
+/Type /Catalog
 >>
 endobj
 3 0 obj
@@ -1129,15 +1129,15 @@ Q
 endstream
 endobj
 5 0 obj
-<< /Contents 4 0 R
+<< /Resources << /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font << /F1.0 7 0 R
+/F2.0 6 0 R
+>>
+>>
+/Contents 4 0 R
 /Parent 3 0 R
 /MediaBox [0 0 595.28 841.89]
 /Type /Page
-/Resources << /Font << /F1.0 7 0 R
-/F2.0 6 0 R
->>
-/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
->>
 >>
 endobj
 6 0 obj
@@ -2318,14 +2318,14 @@ Q
 endstream
 endobj
 9 0 obj
-<< /Contents 8 0 R
+<< /Resources << /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font << /F1.0 7 0 R
+>>
+>>
+/Contents 8 0 R
 /Parent 3 0 R
 /MediaBox [0 0 595.28 841.89]
 /Type /Page
-/Resources << /Font << /F1.0 7 0 R
->>
-/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
->>
 >>
 endobj
 10 0 obj
@@ -2918,14 +2918,14 @@ Q
 endstream
 endobj
 11 0 obj
-<< /Contents 10 0 R
+<< /Resources << /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font << /F1.0 7 0 R
+>>
+>>
+/Contents 10 0 R
 /Parent 3 0 R
 /MediaBox [0 0 595.28 841.89]
 /Type /Page
-/Resources << /Font << /F1.0 7 0 R
->>
-/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
->>
 >>
 endobj
 xref
@@ -2943,9 +2943,9 @@ xref
 0000025279 00000 n 
 0000031701 00000 n 
 trailer
-<< /Root 2 0 R
+<< /Info 1 0 R
+/Root 2 0 R
 /Size 12
-/Info 1 0 R
 >>
 startxref
 31883

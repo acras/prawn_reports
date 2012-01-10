@@ -18,7 +18,7 @@ class ActiveRecordYAMLSerializer
     if @obj.is_a? ActiveRecord::Base
       @contents += serialize_record(@obj, @params)
     elsif @obj.is_a? Array
-      @contents += "itens:\n"
+      @contents += "items:\n"
       @obj.each do |item|
         reset_indent
         indent
@@ -69,7 +69,9 @@ class ActiveRecordYAMLSerializer
     r += serialize_belongs_tos(rec, first_line, params)
     
     r += serialize_has_manys(rec, first_line, params)
-
+    
+    r += serialize_methods(rec, first_line, params)
+    
     r
   end
   
@@ -138,12 +140,24 @@ class ActiveRecordYAMLSerializer
     params[:included_has_many] ||= {}
     params[:included_has_many].each_pair do |k,v|
       r += render_indent(first_line)
-      r += hm.name.to_s + ":"
+      r += k.to_s + ":"
       r += serialize_has_many(rec.send(k), v)
       first_line = false
     end
     r
   end
+  
+  def serialize_methods(rec, first_line, params)
+    r = ''
+    params[:included_methods] ||= {}
+    params[:included_methods].each do |v|       
+      r += render_indent(first_line)
+      val = rec.send(v)
+      r += serialize_key_value(v, val)
+      first_line = false
+    end
+    r
+  end  
   
   def serialize_has_many(hm, params)
     original_indent = @indent_level
