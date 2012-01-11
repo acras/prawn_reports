@@ -45,6 +45,10 @@ class ActiveRecordYAMLSerializer
     @indent_level += 1
   end
   
+  def unindent
+    @indent_level -= 1
+  end
+
   def reset_indent(level = 0)
     @indent_level = level
   end
@@ -122,14 +126,20 @@ class ActiveRecordYAMLSerializer
     params[:included_belongs_to].each_pair do |k,v| 
       serialization_params = v
       type = v[:type] || :fields
+      master_rec = rec.send(k)
       if type == :fields
         v[:fields].each do |f|
           r += render_indent(first_line)
-          master_rec = rec.send(k)
           val = master_rec ? master_rec.send(f) : nil
           r += serialize_key_value(k.to_s + '_' + f.to_s, val)
           first_line = false
         end
+      elsif type == :record
+        r += render_indent(first_line)
+        r += k.to_s + ":\n"
+        indent
+        r += serialize_record(master_rec, v[:params]) if master_rec
+        unindent
       end
     end
     r
