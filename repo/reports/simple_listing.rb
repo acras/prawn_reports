@@ -142,8 +142,8 @@ module PrawnReport
     
     def get_raw_field_value(row, column_name)
       c = row
-      column_name.split('.').each {|n| c = c[n]}
-      c
+      column_name.split('.').each {|n| c = c[n] if c}
+      c.nil? ? '' : c
     end
     
     def second_pass
