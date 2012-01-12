@@ -131,13 +131,20 @@ module PrawnReport
       @params[:columns].each do |c|
         width = c[:width] || 60
         formatter = c[:formatter] || :none
-        formatted_text = format(row[c[:name].to_s], formatter)
+        raw_value = get_raw_field_value(row, c[:name].to_s)
+        formatted_text = format(raw_value, formatter)
         align = c[:align] || :left
         font_size = c[:font_size] || 12
         text(formatted_text, width, :font_size => font_size, :align => align)
         space(3)
       end      
-    end    
+    end   
+    
+    def get_raw_field_value(row, column_name)
+      c = row
+      column_name.split('.').each {|n| c = c[n]}
+      c
+    end
     
     def second_pass
       1.upto(@num_pages) do |i|

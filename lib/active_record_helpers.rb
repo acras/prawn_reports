@@ -16,13 +16,13 @@ class ActiveRecordYAMLSerializer
     @contents += serialize_root_values(@params)
     
     if @obj.is_a? ActiveRecord::Base
-      @contents += serialize_record(@obj, @params)
+      @contents += serialize_record(@obj, false, @params) #asnotarray
     elsif @obj.is_a? Array
       @contents += "items:\n"
       @obj.each do |item|
         reset_indent
         indent
-        @contents += serialize_record(item, @params)  
+        @contents += serialize_record(item, true, @params)  #asarray
       end
     end
     
@@ -60,11 +60,11 @@ class ActiveRecordYAMLSerializer
     r
   end
   
-  def serialize_record(rec, params = {})
+  def serialize_record(rec, as_array, params = {})
     r = ''
     first_line = true
     rec.attributes.each_pair do |k, v|
-      r += render_indent_first_line if first_line
+      r += render_indent_first_line(as_array) if first_line
       r += '  ' * @indent_level unless first_line
       r += serialize_key_value(k,v)
       first_line = false
@@ -105,18 +105,22 @@ class ActiveRecordYAMLSerializer
     r + "\n"
   end
   
-  def render_indent_first_line
+  def render_indent_first_line(as_array)
     r = ''
     if @indent_level != 0
       r = '  ' * (@indent_level - 1)
-      r += '- '
+      if (as_array)
+        r += '- '
+      else
+        r += '  '
+      end
     end
     r
   end
   
   def render_indent(first_line)
     r = ''
-    r += render_indent_first_line(@indent_level) if first_line
+    #r += render_indent_first_line(@indent_level) if first_line
     r += '  ' * @indent_level unless first_line
   end
   
@@ -138,7 +142,7 @@ class ActiveRecordYAMLSerializer
         r += render_indent(first_line)
         r += k.to_s + ":\n"
         indent
-        r += serialize_record(master_rec, v[:params]) if master_rec
+        r += serialize_record(master_rec, false, v[:params]) if master_rec #as_not_array
         unindent
       end
     end
@@ -179,7 +183,7 @@ class ActiveRecordYAMLSerializer
       hm.each do |det|
         reset_indent(original_indent)
         indent
-        r += serialize_record(det, params || {})
+        r += serialize_record(det, true, params || {}) #asarray
       end
     end
     r
