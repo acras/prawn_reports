@@ -126,24 +126,35 @@ class ActiveRecordYAMLSerializer
   
   def serialize_belongs_tos(rec, first_line, params)
     r = ''
-    params[:included_belongs_to] ||= {}
-    params[:included_belongs_to].each_pair do |k,v| 
-      serialization_params = v
-      type = v[:type] || :fields
-      master_rec = rec.send(k)
-      if type == :fields
-        v[:fields].each do |f|
-          r += render_indent(first_line)
-          val = master_rec ? master_rec.send(f) : nil
-          r += serialize_key_value(k.to_s + '_' + f.to_s, val)
-          first_line = false
-        end
-      elsif type == :record
+    if params[:include_all_belongs_to] == true
+      rec.class.reflect_on_all_associations(:belongs_to).collect do |a|
         r += render_indent(first_line)
-        r += k.to_s + ":\n"
+        r += a.name.to_s + ":\n"
         indent
-        r += serialize_record(master_rec, false, v[:params]) if master_rec #as_not_array
+        r += serialize_record(rec.send(a.name), false, 
+          {:include_all_belongs_to => params[:include_all_belongs_to]}) if rec.send(a.name)
         unindent
+      end
+    else
+      params[:included_belongs_to] ||= {}
+      params[:included_belongs_to].each_pair do |k,v| 
+        serialization_params = v
+        type = v[:type] || :fields
+        master_rec = rec.send(k)
+        if type == :fields
+          v[:fields].each do |f|
+            r += render_indent(first_line)
+            val = master_rec ? master_rec.send(f) : nil
+            r += serialize_key_value(k.to_s + '_' + f.to_s, val)
+            first_line = false
+          end
+        elsif type == :record
+          r += render_indent(first_line)
+          r += k.to_s + ":\n"
+          indent
+          r += serialize_record(master_rec, false, v[:params]) if master_rec #as_not_array
+          unindent
+        end
       end
     end
     r
