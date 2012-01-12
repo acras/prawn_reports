@@ -156,7 +156,7 @@ module PrawnReport
     end
     
     def run_groups(row)
-      group_value = get_raw_field_value(row, row[params[:group][:field]])
+      group_value = get_raw_field_value(row, params[:group][:field])
       start_new_group = !@grouping_info[:groups_running]
       start_new_group |=  group_value != @grouping_info[:last_group_value]
       if start_new_group
