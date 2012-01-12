@@ -156,16 +156,17 @@ module PrawnReport
     end
     
     def run_groups(row)
+      group_value = get_raw_field_value(row, row[params[:group][:field]])
       start_new_group = !@grouping_info[:groups_running]
-      start_new_group |=  row[params[:group][:field]] != @grouping_info[:last_group_value]
+      start_new_group |=  group_value != @grouping_info[:last_group_value]
       if start_new_group
         if (params[:group][:new_page] && 
                      @grouping_info[:groups_running] &&
-                     @grouping_info[:last_group_value] != row[params[:group][:field]])
+                     @grouping_info[:last_group_value] != group_value)
           draw_group_summary
           new_page
         end
-        @grouping_info[:last_group_value] = row[params[:group][:field]]
+        @grouping_info[:last_group_value] = group_value
         @grouping_info[:groups_running] = true
         draw_group_header
         draw_column_titles
