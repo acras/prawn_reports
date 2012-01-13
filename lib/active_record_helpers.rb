@@ -63,14 +63,16 @@ class ActiveRecordYAMLSerializer
   def serialize_record(rec, as_array, params = {})
     r = ''
     first_line = true
+    to_serialize = (rec.is_a? ActiveRecord::Base) ? rec.attributes : rec
 
-    rec.each_pair do |k, v|
+    to_serialize.each_pair do |k, v|
       r += render_indent_first_line(as_array) if first_line
       r += '  ' * @indent_level unless first_line
       r += serialize_key_value(k,v)
-      first_line = false      
+      first_line = false
     end
-    if rec.is_a? ActiveRecord::Base
+      
+    rec.is_a? ActiveRecord::Base
       r += serialize_belongs_tos(rec, first_line, params)
       r += serialize_has_manys(rec, first_line, params)
       r += serialize_methods(rec, first_line, params)
