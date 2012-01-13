@@ -72,7 +72,7 @@ class ActiveRecordYAMLSerializer
       first_line = false
     end
       
-    rec.is_a? ActiveRecord::Base
+    if rec.is_a? ActiveRecord::Base
       r += serialize_belongs_tos(rec, first_line, params)
       r += serialize_has_manys(rec, first_line, params)
       r += serialize_methods(rec, first_line, params)
