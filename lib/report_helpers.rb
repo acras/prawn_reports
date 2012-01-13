@@ -1,5 +1,6 @@
 module PrawnReport
   class Report
+    include ActionView::Helpers::NumberHelper
       
     def box(width, height, options = {})
       @pdf.rounded_rectangle([0, y], width, height, TEXT_BOX_RADIUS)
@@ -45,10 +46,16 @@ module PrawnReport
     end
   
     def format(value, formatter)
-      if (formatter == :currency)
-        return (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%d' % (value * 100 % 100))
+      if !value.nil? && !value.blank?
+        if (formatter == :currency)
+          number_to_currency(value, :unit => '', :separator => ',', :delimiter => '')
+        elsif (formatter == :date)
+          value.strftime('%d/%m/%Y')
+        else
+          value.to_s
+        end
       else
-        return value.to_s
+        ''
       end
     end	
 
