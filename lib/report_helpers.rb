@@ -36,6 +36,10 @@ module PrawnReport
       @pdf.y
     end
     
+    def y=(y)
+      @pdf.y = y
+    end    
+    
     def space(width)
       @x += width
     end

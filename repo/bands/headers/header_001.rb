@@ -16,7 +16,12 @@ module PrawnReport
   #  filter. If value is present the title is concatenated with ':'
   class Header001 < HeaderBand
     
-    def internal_draw
+    def initialize(report, params = {})
+      super(report, params)
+      @filter_size = 0
+    end
+    
+    def internal_draw            
       report.text(report.data['company_name'], 300, :style => :bold, :font_size => 16)
       txt_emissao = 'Data de emissão: ' + report.today.strftime('%d/%m/%Y')
       length = report.pdf.width_of(txt_emissao, :size => 12)
@@ -27,7 +32,6 @@ module PrawnReport
       report.text(report.params[:report_name], report.max_width, :font_size => 13, 
          :align => :center)
       report.line_break(13)
-      @filter_size = 0
       draw_filters if report.params[:filters]
       report.horizontal_line
     end
