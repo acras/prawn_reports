@@ -38,23 +38,23 @@ module PrawnReport
       @running_totals = report_params.delete(:running_totals) || []
       @num_pages = 1
       
-      @report_params = DEFAULT_REPORT_PARAMS.merge(report_params)
-      @pdf = Prawn::Document.new(@report_params)
+      @params = DEFAULT_REPORT_PARAMS.merge(report_params)
+      @pdf = Prawn::Document.new(@params)
         
       @pdf.font(DEFAULT_FONT)
       @pdf.line_width = LINE_WIDTH
       
-      if @report_params[:page_layout] == :portrait
-        w, h = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+      if @params[:page_layout] == :portrait
+        w, h = *Prawn::Document::PageGeometry::SIZES[@params[:page_size]]
       else
-        h, w = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+        h, w = *Prawn::Document::PageGeometry::SIZES[@params[:page_size]]
       end
       @x = 0
-      @y = @max_height = h - (@report_params[:margin][0] + @report_params[:margin][2])
-      @max_width = w - (@report_params[:margin][1] + @report_params[:margin][3])
+      @y = @max_height = h - (@params[:margin][0] + @params[:margin][2])
+      @max_width = w - (@params[:margin][1] + @params[:margin][3])
 
       @footer_size = 0
-      @pdf.move_cursor_to(max_height - @report_params[:margin][2])
+      @pdf.move_cursor_to(max_height - @params[:margin][2])
       
       @header_class = @header_other_pages_class = @summary_band_class =  @footer_class = nil
       @totals = {}
@@ -83,7 +83,7 @@ module PrawnReport
       @num_pages += 1
       @pdf.start_new_page
       @x = 0
-      @pdf.move_down(@report_params[:margin][0])
+      @pdf.move_down(@params[:margin][0])
       
       draw_header_other_pages
     end
