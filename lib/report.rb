@@ -31,36 +31,40 @@ module PrawnReport
   #   report parts.
   class Report
     attr_reader :pdf, :data, :max_width, :max_height, :totals, :group_totals
-    attr_accessor :header_class, :header_other_pages_class, :x, :params,
+    attr_accessor :header_class, :header_other_pages_class, :x, :report_params,
       :running_totals
     
-    def initialize(report_params = {})
-      @running_totals = report_params.delete(:running_totals) || []
+    def initialize(report_params)
+      @report_params = DEFAULT_REPORT_PARAMS.merge(report_params || {})
+      @running_totals = @report_params.delete(:running_totals) || []
       @num_pages = 1
       
-      @params = DEFAULT_REPORT_PARAMS.merge(report_params)
-      @pdf = Prawn::Document.new(@params)
+      @pdf = Prawn::Document.new(@report_params)
         
       @pdf.font(DEFAULT_FONT)
       @pdf.line_width = LINE_WIDTH
       
-      if @params[:page_layout] == :portrait
-        w, h = *Prawn::Document::PageGeometry::SIZES[@params[:page_size]]
+      if @report_params[:page_layout] == :portrait
+        w, h = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
       else
-        h, w = *Prawn::Document::PageGeometry::SIZES[@params[:page_size]]
+        h, w = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
       end
       @x = 0
-      @y = @max_height = h - (@params[:margin][0] + @params[:margin][2])
-      @max_width = w - (@params[:margin][1] + @params[:margin][3])
+      @y = @max_height = h - (@report_params[:margin][0] + @report_params[:margin][2])
+      @max_width = w - (@report_params[:margin][1] + @report_params[:margin][3])
 
       @footer_size = 0
-      @pdf.move_cursor_to(max_height - @params[:margin][2])
+      @pdf.move_cursor_to(max_height - @report_params[:margin][2])
       
       @header_class = @header_other_pages_class = @summary_band_class =  @footer_class = nil
       @totals = {}
       @group_totals = {}
       
       initialize_running_totals
+    end
+    
+    def params
+      @report_params
     end
     
     def draw(data)
@@ -83,7 +87,7 @@ module PrawnReport
       @num_pages += 1
       @pdf.start_new_page
       @x = 0
-      @pdf.move_down(@params[:margin][0])
+      @pdf.move_down(@report_params[:margin][0])
       
       draw_header_other_pages
     end
@@ -123,15 +127,15 @@ module PrawnReport
     end
     
     def draw_group_summary
-      if @params[:group] && @params[:group][:summary_class]
-        summary = @params[:group][:summary_class].new(self)
+      if @report_params[:group] && @report_params[:group][:summary_class]
+        summary = @report_params[:group][:summary_class].new(self)
         summary.draw
       end
     end
 
     def draw_group_header
-      if @params[:group][:header_class]
-        header = @params[:group][:header_class].new(self)
+      if @report_params[:group][:header_class]
+        header = @report_params[:group][:header_class].new(self)
         header.draw
       end
     end

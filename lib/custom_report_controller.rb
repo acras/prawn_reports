@@ -10,9 +10,7 @@ module PrawnReportController
     @pr_report_class
   end
     
-  def get_pr_suggested_filename
-    @pr_suggested_filename || 'relatorio.pdf'
-  end
+  def get_pr_suggested_filename; end
   
   def get_pr_report_params
     @pr_report_params || {}
@@ -34,10 +32,16 @@ module PrawnReportController
     else
       report_content = rec.pr_serialize(get_pr_serialization_params)
       report = get_pr_report_class.new(get_pr_report_params)
-      report.params[:filters] = get_pr_filters
+      report.report_params[:filters] = get_pr_filters
       report_content = report.draw(report_content.get_yaml)
 
-      send_data(report_content, :filename => get_pr_suggested_filename)
+      fn = get_pr_suggested_filename
+      
+      if fn
+        send_data(report_content, :filename => fn)        
+      else
+        send_data(report_content, :disposition => 'inline', :type => 'application/pdf')
+      end
     end
   end
   

@@ -23,7 +23,7 @@ module PrawnReport
   #  class ProductTypeListing < PrawnReport::SimpleListing
   #    def initialize
   #      super
-  #      @params = {
+  #      @report_params = {
   #        :report_name => 'Product Type Listing', 
   #        :field => 'name',
   #        :title => 'Name'
@@ -43,7 +43,7 @@ module PrawnReport
   #  class PeopleListing < PrawnReport::SimpleListing
   #    def initialize
   #      super
-  #      @params = {
+  #      @report_params = {
   #        :report_name => 'People Listing', 
   #        :columns => [
   #          {:name => 'name', :title => 'Name', :width => 200},
@@ -83,7 +83,7 @@ module PrawnReport
     
     def draw_internal
       draw_column_titles unless grouped?
-      detail_name = @params[:detail_name] || 'items'
+      detail_name = @report_params[:detail_name] || 'items'
       @data[detail_name].each do |row|
         new_page unless fits?(15)
         run_groups(row) if grouped?
@@ -99,22 +99,22 @@ module PrawnReport
     end
     
     def render_line(row)
-      if @params[:field]
+      if @report_params[:field]
         render_one_column_line(row)
-      elsif @params[:columns]
+      elsif @report_params[:columns]
         render_multi_column_line(row)
       end
     end
     
     def  render_one_column_title
-      if @params[:title]
-        text(@params[:title], @max_width, :font_size => 12, :style => :bold)
+      if @report_params[:title]
+        text(@report_params[:title], @max_width, :font_size => 12, :style => :bold)
         line_break(13)
       end
     end
     
     def render_multi_column_title
-      @params[:columns].each do |c|
+      @report_params[:columns].each do |c|
         width = c[:width] || 60
         align = c[:align] || :left
         text(c[:title].to_s, width, :font_size => 12, :style => :bold, :align => align) 
@@ -124,11 +124,11 @@ module PrawnReport
     end
     
     def render_one_column_line(row)
-      text(row[@params[:field]], 100, :font_size => 12)
+      text(row[@report_params[:field]], 100, :font_size => 12)
     end
     
     def render_multi_column_line(row)
-      @params[:columns].each do |c|
+      @report_params[:columns].each do |c|
         width = c[:width] || 60
         formatter = c[:formatter] || :none
         raw_value = get_raw_field_value(row, c[:name].to_s)
@@ -175,9 +175,9 @@ module PrawnReport
     end
     
     def draw_column_titles
-      if @params[:field]
+      if @report_params[:field]
         render_one_column_title
-      elsif @params[:columns]
+      elsif @report_params[:columns]
         render_multi_column_title
       end
     end
