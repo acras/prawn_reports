@@ -13,8 +13,9 @@ class GenerateReportController < ApplicationController
 
   def get_pr_serialization_params
     lab = Laboratorio.find(session[:laboratorio_id])
+    @report_template = ReportTemplate.find(params["report_template_id"])
     {:root_values => {:company_name => lab.nome},
-     :include_all_belongs_to => true}
+     :include_all_belongs_to => true}.merge(@report_template.serialization_params.symbolize_keys)
   end
 
   def get_pr_report_data
