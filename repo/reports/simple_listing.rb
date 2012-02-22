@@ -75,7 +75,7 @@ module PrawnReport
       @header_other_pages_class = PrawnReport::Header002       
       @footer_class = PrawnReport::Footer001
       @grouping_info = {:last_group_value => nil, 
-                        :groups_runing => false}
+                        :groups_running => false}
       @filling_colors = ['cccccc', 'ffffff'].cycle
     end
     
@@ -160,11 +160,10 @@ module PrawnReport
       start_new_group = !@grouping_info[:groups_running]
       start_new_group |=  group_value != @grouping_info[:last_group_value]
       if start_new_group
-        if (params[:group][:new_page] && 
-                     @grouping_info[:groups_running] &&
+        if(@grouping_info[:groups_running] &&
                      @grouping_info[:last_group_value] != group_value)
           draw_group_summary
-          new_page
+          new_page if params[:group][:new_page]
         end
         @grouping_info[:last_group_value] = group_value
         @grouping_info[:groups_running] = true
