@@ -1,9 +1,5 @@
-require "custom_report_controller"
+class GenerateReportController < PrawnReport.parent_controller.constantize
 
-class GenerateReportController < ApplicationController
-
-  include PrawnReportController
-  
   def get_pr_report_class
     @report_template = ReportTemplate.find(params["report_template_id"])    
     Kernel.const_get(@report_template.report_class)
@@ -21,7 +17,7 @@ class GenerateReportController < ApplicationController
   def get_pr_report_data
     @report_template = ReportTemplate.find(params["report_template_id"])
     mc = Kernel.const_get(@report_template.ac_filter_def.model_class)
-    records = mc.apply_ac_filter(parse_ac_filters(params))
+    records = mc.apply_ac_filter(parse_ac_filters(params), get_system_criteria)
   end
 
 end
