@@ -85,8 +85,8 @@ module PrawnReport
       draw_column_titles unless grouped?
       detail_name = @report_params[:detail_name] || 'items'
       @data[detail_name].each do |row|
-        new_page unless fits?(15)
         run_groups(row) if grouped?
+        new_page unless fits?(15)
         @x = 0
         @pdf.fill_color @filling_colors.next
         @pdf.fill_rectangle [x,y], max_width, 15
@@ -174,6 +174,7 @@ module PrawnReport
     end
     
     def draw_column_titles
+      new_page unless fits?(15)
       if @report_params[:field]
         render_one_column_title
       elsif @report_params[:columns]
