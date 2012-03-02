@@ -79,7 +79,7 @@ def parse_conditions(parsed_filter, system_params)
   end
   
   conditions[0] = conditions[0].join(' and ')
-  conditions.flatten!
+  conditions.flatten
 end 
 
 module AcFilters  
