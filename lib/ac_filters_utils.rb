@@ -34,41 +34,59 @@ def get_ac_filters_applied(params, ac_filter_def)
   r
 end
 
+def is_filled?(parsed_params, filter)
+  !parsed_params[filter.id].nil?
+end
 
-module AcFilters
-  
-  def apply_ac_filter(parsed_filter, system_params)
-    system_params.symbolize_keys!
-    filter_def = AcFilterDef.find(parsed_filter['filter_def_id'])
-    conditions = []
-    conditions[0] = ['1=1']
-    filter_def.ac_filters.each do |f|
-      if f.query_user?
-        filled = parsed_filter[f.id]['is_filled'] == 'true'
-        if filled && f.has_filled_criteria?
-          unless f.data_type == 'checkbox'
-            fp = fill_params(f, parsed_filter[f.id])
-          end
-          conditions[0] << f.filled_criteria
-          unless f.data_type == 'checkbox'
-            conditions << fp
-          end
-        elsif !filled && f.has_unfilled_criteria?
-          conditions[0] << f.unfilled_criteria
+def fill_params(f, fillings)
+  criteria = f.filled_criteria
+  if f.data_type == 'date'  
+    [fillings['from_date'], fillings['to_date']]
+  elsif f.data_type == 'text'
+    '%' + fillings['filter_value'] + '%'
+  elsif f.data_type == 'options'
+    fillings['filter_value']
+  else
+    fillings['filter_value']
+  end
+end
+
+def parse_conditions(parsed_filter, system_params)
+  system_params.symbolize_keys!
+  filter_def = AcFilterDef.find(parsed_filter['filter_def_id'])
+  conditions = []
+  conditions[0] = ['1=1']
+  filter_def.ac_filters.each do |f|
+    if f.query_user?
+      filled = parsed_filter[f.id]['is_filled'] == 'true'
+      if filled && f.has_filled_criteria?
+        unless f.data_type == 'checkbox'
+          fp = fill_params(f, parsed_filter[f.id])
         end
-      elsif f.system_criteria.to_s != ''
         conditions[0] << f.filled_criteria
-        conditions << system_params[f.system_criteria.to_sym]
-      else
-        conditions[0] << f.filled_criteria
+        unless f.data_type == 'checkbox'
+          conditions << fp
+        end
+      elsif !filled && f.has_unfilled_criteria?
+        conditions[0] << f.unfilled_criteria
       end
+    elsif f.system_criteria.to_s != ''
+      conditions[0] << f.filled_criteria
+      conditions << system_params[f.system_criteria.to_sym]
+    else
+      conditions[0] << f.filled_criteria
     end
-    
-    conditions[0] = conditions[0].join(' and ')
-    conditions.flatten!
-    
+  end
+  
+  conditions[0] = conditions[0].join(' and ')
+  conditions.flatten!
+end 
+
+module AcFilters  
+  def apply_ac_filter(parsed_filter, system_params)
+    conditions = parse_conditions(parsed_filter, system_params)
     find_params = {:conditions => conditions}
-    
+    filter_def = AcFilterDef.find(parsed_filter['filter_def_id'])
     find_params[:select] = filter_def.select_sql.to_s unless filter_def.select_sql.nil?
     find_params[:order] = filter_def.order_sql.to_s unless filter_def.order_sql.nil?
     find_params[:joins] = filter_def.joins_param unless filter_def.joins_param.nil?  
@@ -76,23 +94,5 @@ module AcFilters
     find_params[:group] = filter_def.group_param unless filter_def.group_param.nil?
     
     find(:all, find_params)
-  end
-  
-  def is_filled?(parsed_params, filter)
-    !parsed_params[filter.id].nil?
-  end
-  
-  def fill_params(f, fillings)
-    criteria = f.filled_criteria
-    if f.data_type == 'date'  
-      [fillings['from_date'], fillings['to_date']]
-    elsif f.data_type == 'text'
-      '%' + fillings['filter_value'] + '%'
-    elsif f.data_type == 'options'
-      fillings['filter_value']
-    else
-      fillings['filter_value']
-    end
-  end
-  
+  end  
 end
