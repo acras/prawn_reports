@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 def parse_ac_filters(params)
   parsed_filters = {}
   parsed_filters['filter_def_id'] = params['filter_def_id'].to_i
