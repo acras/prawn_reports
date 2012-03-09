@@ -1,6 +1,8 @@
+# coding: utf-8
+
 require 'yaml'
 
- 
+
 ReportTemplate.delete_all
 AcFilterOption.delete_all
 AcFilter.delete_all

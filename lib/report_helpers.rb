@@ -1,3 +1,5 @@
+# coding: utf-8
+
 module PrawnReport
   class Report
     include ActionView::Helpers::NumberHelper
