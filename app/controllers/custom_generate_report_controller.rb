@@ -8,4 +8,10 @@ class CustomGenerateReportController < ApplicationController
     {}
   end
   
+  def get_pr_suggested_filename
+    @report_template = ReportTemplate.find(params["report_template_id"])    
+    @report_template.report_class.underscore + '_' + Date.today.to_s + '.pdf'
+  end
+  
+  
 end

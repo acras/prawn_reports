@@ -2,7 +2,8 @@ class ReportTemplatesController < ApplicationController
   
   def index
     conditions = []
-    conditions = ['report_type = ?', params['report_type'].to_s] if params['report_type'].to_s != ''
+    conditions = ['report_type in (?)', parse_array(params['report_type'])] unless params['report_type'].blank?
+    
     @templates = ReportTemplate.find(:all, 
       :conditions => conditions)
     
@@ -13,5 +14,19 @@ class ReportTemplatesController < ApplicationController
     end
     
   end
+  
+  
+  private
+
+  def parse_array(s_array)
+    retorno = []
+    s_array.split(',').each{|s|
+      retorno << s
+    }
+    retorno
+  end
+  
+  
+  
     
 end

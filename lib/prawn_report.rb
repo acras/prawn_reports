@@ -20,4 +20,4 @@ require File.expand_path(File.dirname(__FILE__) + "/../repo/bands/footers/footer
 require File.expand_path(File.dirname(__FILE__) + "/../repo/reports/simple_listing.rb")
 
 # Rails 3 compatibility
-require 'prawn_report/engine' if defined? Rails
+require 'prawn_report/engine' if ((defined? Rails) and (Rails::version >= '3.0.0'))
