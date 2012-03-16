@@ -1,4 +1,6 @@
 class GenerateReportController < PrawnReport.parent_controller.constantize
+  
+  unloadable
 
   def get_pr_report_class
     @report_template = ReportTemplate.find(params["report_template_id"])    

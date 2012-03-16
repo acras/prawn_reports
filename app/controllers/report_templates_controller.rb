@@ -1,4 +1,6 @@
 class ReportTemplatesController < ApplicationController
+ 
+  unloadable
   
   def index
     conditions = []
@@ -25,8 +27,5 @@ class ReportTemplatesController < ApplicationController
     }
     retorno
   end
-  
-  
-  
-    
+      
 end

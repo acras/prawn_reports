@@ -1,5 +1,7 @@
 class AcFilterDefsController < ApplicationController
   
+  unloadable
+  
   def index
     @ac_filter_defs = AcFilterDef.find(:all)
     
