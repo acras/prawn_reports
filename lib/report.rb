@@ -7,25 +7,22 @@ require File.expand_path(File.dirname(__FILE__) + "/report_info")
 
 # This is the module for all classes in the prawn_report gem
 module PrawnReport
-
-  #Will be passed to pdf constructor, default page size is A4
-  PAGE_SIZE = 'A4'
-  DEFAULT_PAGE_LAYOUT = :portrait
-  MARGIN = [20, 20, 20, 20] # [top, right, bottom, left]
-  DEFAULT_REPORT_PARAMS = {:page_size => PAGE_SIZE, :margin => MARGIN,
-    :page_layout => DEFAULT_PAGE_LAYOUT}
-  
-  LABEL_SIZE = 6
-  TEXT_SIZE = 10
-  
-  SECTION_SPACING = LABEL_SIZE + 4
-  
-  LINE_WIDTH = 0.3
-  
-  DEFAULT_FONT = 'Times-Roman'
+  unless defined? DEFAULT_REPORT_PARAMS 
+    DEFAULT_REPORT_PARAMS = {:page_size => 'A4', :margin => [20, 20, 20, 20],
+      :page_layout => :portrait}
     
-  TEXT_BOX_RADIUS = 2
-  TEXT_BOX_HEIGTH = 20
+    LABEL_SIZE = 6
+    TEXT_SIZE = 10
+    
+    SECTION_SPACING = LABEL_SIZE + 4
+    
+    LINE_WIDTH = 0.3
+    
+    DEFAULT_FONT = 'Times-Roman'
+      
+    TEXT_BOX_RADIUS = 2
+    TEXT_BOX_HEIGTH = 20
+  end
   
   # Report is the base class for all reports, it encapsulates all logic for rendering
   #   report parts.
