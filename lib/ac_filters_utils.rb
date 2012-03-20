@@ -1,3 +1,4 @@
+# encoding: utf-8
 
 def parse_ac_filters(params)
   parsed_filters = {}
