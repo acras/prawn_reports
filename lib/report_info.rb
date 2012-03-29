@@ -8,7 +8,7 @@ module PrawnReport
     attr_accessor :force_today_as
 
     def fits?(h)
-      (y - footer_size - h - @report_params[:margin][2]) > 0 
+      (y - footer_size - h - @report_params[:margin][2]) >= 0 
     end
     
     def header_size
