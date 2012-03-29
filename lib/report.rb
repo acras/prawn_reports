@@ -41,10 +41,14 @@ module PrawnReport
       @pdf.font(DEFAULT_FONT)
       @pdf.line_width = LINE_WIDTH
       
-      if @report_params[:page_layout] == :portrait
-        w, h = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+      if @report_params[:page_size].is_a?(String)
+        if @report_params[:page_layout] == :portrait
+          w, h = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+        else
+          h, w = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+        end
       else
-        h, w = *Prawn::Document::PageGeometry::SIZES[@report_params[:page_size]]
+        w, h = @report_params[:page_size]
       end
       @x = 0
       @y = @max_height = h - (@report_params[:margin][0] + @report_params[:margin][2])
