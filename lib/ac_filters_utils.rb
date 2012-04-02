@@ -25,8 +25,14 @@ def get_ac_filters_applied(params, ac_filter_def)
       val = ''
       if ['text', 'options'].include? f.data_type
         val = pf['filter_value']
-      elsif f.data_type == 'date'
-        val = "#{Date.parse(pf['from_date']).strftime('%d/%m/%Y')} até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"        
+      elsif f.data_type == 'period'
+        if (!pf['from_date'].empty?) && (!pf['to_date'].empty?) 
+          val = "#{Date.parse(pf['from_date']).strftime('%d/%m/%Y')} até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
+        elsif !pf['from_date'].empty?
+          val = "Desde #{Date.parse(pf['from_date']).strftime('%d/%m/%Y')}"
+        elsif
+          val = "Até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
+        end
       elsif f.data_type == 'autocomplete'
         val = Kernel.const_get(f.target_model).find(pf['filter_value']).send(f.target_field)
       end
@@ -41,7 +47,7 @@ def is_filled?(parsed_params, filter)
 end
 
 def fill_params(f, fillings)
-  if f.data_type == 'date'  
+  if f.data_type == 'period'  
     [fillings['from_date'], fillings['to_date']]
   elsif f.data_type == 'text'
     '%' + fillings['filter_value'] + '%'
@@ -80,6 +86,8 @@ def parse_condition(conditions, parsed_filter, filter)
     fill_with_checkbox(conditions, filled, parsed_filter, filter)
   elsif filter.data_type == 'options'
     fill_with_options(conditions, filled, parsed_filter, filter)
+  elsif filter.data_type == 'period'
+    fill_with_period(conditions, filled, parsed_filter, filter)
   else
     fill_with_others(conditions, filled, parsed_filter, filter)
   end
@@ -104,6 +112,22 @@ def fill_with_options(conditions, filled, parsed_filter, filter)
     elsif filter.has_filled_criteria?
       conditions[0] << filter.filled_criteria
       conditions << fill_params(filter, parsed_filter[filter.id])
+    end
+  end
+end
+
+def fill_with_period(conditions, filled, parsed_filter, filter)
+  if !filled && filter.has_unfilled_criteria?
+    conditions[0] << c.unfilled_criteria
+  elsif filled
+    fp = fill_params(filter, parsed_filter[filter.id])
+    if fp[0].to_s != ''
+      conditions[0] << filter.filled_criteria_from
+      conditions << fp[0]
+    end
+    if fp[1].to_s != ''
+      conditions[0] << filter.filled_criteria_to
+      conditions << fp[1]
     end
   end
 end
