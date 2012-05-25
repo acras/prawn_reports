@@ -12,7 +12,16 @@ class ReportTemplatesController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @templates }
-      format.fxml { render :fxml => @templates.to_fxml({:include => { :ac_filter_def => {}}}) }
+      format.fxml do
+        render :fxml => @templates.to_fxml(
+        { :include => {
+          :ac_filter_def => { :include => {
+            :ac_filters => { :include => :ac_filter_options}
+            }}
+         }
+        }
+      )
+      end
     end
     
   end
