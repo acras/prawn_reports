@@ -54,7 +54,7 @@ module PrawnReport
     def format(value, formatter)
       if !value.nil? && !value.blank?
         if (formatter == :currency)
-          number_to_currency(value, :unit => '', :separator => ',', :delimiter => '')
+          number_to_currency(value, :unit => '', :separator => ',', :delimiter => '.')
         elsif (formatter == :date)
           value.strftime('%d/%m/%Y')
         else
