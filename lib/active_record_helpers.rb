@@ -94,6 +94,7 @@ class ActiveRecordYAMLSerializer
   end
   
   def serialize_string(s)
+    s.strip!
     r = ''
     if s.lines.count > 1
       r += "|-\n"
