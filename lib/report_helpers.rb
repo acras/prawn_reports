@@ -51,12 +51,14 @@ module PrawnReport
       @pdf.move_down(@pdf.height_of('A', :size => size) + 2)
     end
   
-    def format(value, formatter)
+    def format(value, formatter, options = {})
       if !value.nil? && !value.blank?
         if (formatter == :currency)
           number_to_currency(value, :unit => '', :separator => ',', :delimiter => '.')
         elsif (formatter == :date)
           value.strftime('%d/%m/%Y')
+        elsif (formatter == :function)
+          send(options[:formatter_function].to_s, value)
         else
           value.to_s
         end

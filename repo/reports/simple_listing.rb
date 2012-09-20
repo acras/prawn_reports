@@ -77,6 +77,13 @@ module PrawnReport
       @grouping_info = {:last_group_value => nil, 
                         :groups_running => false}
       @filling_colors = ['cccccc', 'ffffff'].cycle
+      @current_row = nil
+    end
+    
+    #Override line_height to calculate the proper line height for the record
+    #The current record can be accessed via the property @current_row
+    def line_height
+      15
     end
     
     protected
@@ -85,14 +92,15 @@ module PrawnReport
       draw_column_titles unless grouped?
       detail_name = @report_params[:detail_name] || 'items'
       @data[detail_name].each do |row|
+        @current_row = row
         run_groups(row) if grouped?
-        new_page unless fits?(15)
+        new_page unless fits?(line_height)
         @x = 0
         @pdf.fill_color @filling_colors.next
-        @pdf.fill_rectangle [x,y], max_width, 15
+        @pdf.fill_rectangle [x,y], max_width, line_height
         @pdf.fill_color '000000'
         render_line(row)
-        line_break(13)
+        line_break(line_height-4)
         run_totals(row)
       end
       draw_group_summary if @data[detail_name].count > 0
@@ -132,13 +140,23 @@ module PrawnReport
         width = c[:width] || 60
         formatter = c[:formatter] || :none
         raw_value = get_raw_field_value(row, c[:name].to_s)
-        formatted_text = format(raw_value, formatter)
+        formatter_options = build_formatter_options(formatter, c)
+        formatted_text = format(raw_value, formatter, formatter_options)
         align = c[:align] || :left
         font_size = c[:font_size] || 12
         text(formatted_text, width, :font_size => font_size, :align => align)
         space(3)
       end      
     end   
+    
+    #This function will build the options to be passed to the specific formatter
+    def build_formatter_options(formatter, column_def)
+      r = {}
+      if formatter == :function
+        r[:formatter_function] = column_def[:formatter_function]
+      end
+      r
+    end
     
     def get_raw_field_value(row, column_name)
       c = row
