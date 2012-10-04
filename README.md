@@ -1,4 +1,4 @@
 prawn_reports
 =============
 
-Practical Reporting with Prawn
+Practical Reporting with Prawn, includes activeRecord serialization helpers.
