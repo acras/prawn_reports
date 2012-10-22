@@ -141,8 +141,9 @@ class ActiveRecordYAMLSerializer
     else
       params[:included_belongs_to] ||= {}
       params[:included_belongs_to].each_pair do |k,v| 
+        v.symbolize_keys!
         serialization_params = v
-        type = v[:type] || :fields
+        type = v[:type].to_sym || :fields
         master_rec = rec.send(k)
         if type == :fields
           v[:fields].each do |f|
