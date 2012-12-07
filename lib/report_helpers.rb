@@ -69,7 +69,7 @@ module PrawnReport
     
     def draw_graph(g, params)
       data = StringIO.new(g.to_blob)
-      pdf.image(data, params)
+      @pdf.image(data, params)
     end
 
   end
