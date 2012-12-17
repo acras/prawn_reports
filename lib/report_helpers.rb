@@ -57,6 +57,9 @@ module PrawnReport
           number_to_currency(value, :unit => '', :separator => ',', :delimiter => '.')
         elsif (formatter == :date)
           value.strftime('%d/%m/%Y')
+        elsif (formatter == :timezone_date)
+          tz = Time.zone.parse(value)
+          tz.nil? ? '' : tz.strftime('%d/%m/%Y')
         elsif (formatter == :function)
           send(options[:formatter_function].to_s, value)
         else

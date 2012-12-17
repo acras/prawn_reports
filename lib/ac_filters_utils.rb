@@ -25,7 +25,7 @@ def get_ac_filters_applied(params, ac_filter_def)
       val = ''
       if ['text', 'options'].include? f.data_type
         val = pf['filter_value']
-      elsif f.data_type == 'period'
+      elsif ['period', 'timezone_period'].include?(f.data_type)
         if (!pf['from_date'].empty?) && (!pf['to_date'].empty?) 
           val = "#{Date.parse(pf['from_date']).strftime('%d/%m/%Y')} até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
         elsif !pf['from_date'].empty?
@@ -47,7 +47,7 @@ def is_filled?(parsed_params, filter)
 end
 
 def fill_params(f, fillings)
-  if f.data_type == 'period'  
+  if ['period', 'timezone_period'].include?(f.data_type)
     [fillings['from_date'], fillings['to_date']]
   elsif f.data_type == 'text'
     '%' + fillings['filter_value'] + '%'
@@ -88,6 +88,8 @@ def parse_condition(conditions, parsed_filter, filter)
     fill_with_options(conditions, filled, parsed_filter, filter)
   elsif filter.data_type == 'period'
     fill_with_period(conditions, filled, parsed_filter, filter)
+  elsif filter.data_type == 'timezone_period'
+    fill_with_timezone_period(conditions, filled, parsed_filter, filter)
   else
     fill_with_others(conditions, filled, parsed_filter, filter)
   end
@@ -128,6 +130,22 @@ def fill_with_period(conditions, filled, parsed_filter, filter)
     if fp[1].to_s != ''
       conditions[0] << filter.filled_criteria_to
       conditions << fp[1]
+    end
+  end
+end
+
+def fill_with_timezone_period(conditions, filled, parsed_filter, filter)
+  if !filled && filter.has_unfilled_criteria?
+    conditions[0] << c.unfilled_criteria
+  elsif filled
+    fp = fill_params(filter, parsed_filter[filter.id])
+    if fp[0].to_s != ''
+      conditions[0] << filter.filled_criteria_from
+      conditions << Time.zone.parse(fp[0])
+    end
+    if fp[1].to_s != ''
+      conditions[0] << filter.filled_criteria_to
+      conditions << Time.zone.parse(fp[1])
     end
   end
 end
