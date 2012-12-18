@@ -145,7 +145,7 @@ def fill_with_timezone_period(conditions, filled, parsed_filter, filter)
     end
     if fp[1].to_s != ''
       conditions[0] << filter.filled_criteria_to
-      conditions << Time.zone.parse(fp[1])
+      conditions << Time.zone.parse(fp[1])+1.day
     end
   end
 end
