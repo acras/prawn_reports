@@ -2,7 +2,6 @@
 
 module PrawnReport
   class Report
-    include ActionView::Helpers::NumberHelper
       
     def box(width, height, options = {})
       @pdf.rounded_rectangle([0, y], width, height, TEXT_BOX_RADIUS)
@@ -21,7 +20,7 @@ module PrawnReport
     def text(text, width, options = {})
       font_size = options[:font_size] || TEXT_SIZE
       @pdf.text_box(text, :size => font_size, :style => options[:style], :at => [@x, y - 4],
-            :width => width, :height => @pdf.height_of(text, :size => font_size), 
+            :width => width, :height => font_size, 
             :valign => (options[:valign] || :top),
             :align => (options[:align] || :left)
             )
@@ -52,16 +51,20 @@ module PrawnReport
     end
   
     def format(value, formatter, options = {})
-      if !value.nil? && !value.blank?
+      if !value.nil? && value != ''
         if (formatter == :currency)
-          number_to_currency(value, :unit => '', :separator => ',', :delimiter => '.')
+          if value < 0
+            '-'+((value.to_i*-1).to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % (value.abs * 100 % 100))
+          else
+            (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % (value * 100 % 100))
+          end
         elsif (formatter == :date)
-          value.strftime('%d/%m/%Y')
+          value.to_time.strftime('%d/%m/%Y')
         elsif (formatter == :timezone_date)
           tz = Time.zone.parse(value)
           tz.nil? ? '' : tz.strftime('%d/%m/%Y')
         elsif (formatter == :function)
-          send(options[:formatter_function].to_s, value)
+          send(options[:formatter_function].to_s, value)          
         else
           value.to_s
         end

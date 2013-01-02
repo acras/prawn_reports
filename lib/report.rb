@@ -82,7 +82,7 @@ module PrawnReport
       @pdf.render
     end
     
-    def new_page
+    def new_page(print_titles = true)
       draw_footer
       
       @num_pages += 1
@@ -92,6 +92,12 @@ module PrawnReport
       
       draw_header_other_pages
     end
+    
+    def fill_color(color)
+      @pdf.fill_color color
+        @pdf.fill_rectangle [x,y], max_width, 15
+        @pdf.fill_color '000000'
+    end    
     
     protected
     
@@ -147,8 +153,9 @@ module PrawnReport
     
     def run_totals(data_row)
       @running_totals.each do |rt|
-        @totals[rt] = (@totals[rt] || 0) + data_row[rt]
-        @group_totals[rt] = (@group_totals[rt] || 0) + data_row[rt]
+        vl = get_raw_field_value(data_row, rt)
+        @totals[rt] = (@totals[rt] || 0) + (vl == '' ? 0 : vl)
+        @group_totals[rt] = (@group_totals[rt] || 0) + (vl == '' ? 0 : vl)
       end
     end
 
@@ -164,7 +171,19 @@ module PrawnReport
         @group_totals[rt] = 0
       end
     end
-          
+    
+    def reset_totals
+      @running_totals.each do |rt|
+        @totals[rt] = 0
+      end
+    end    
+    
+    def get_raw_field_value(row, column_name)
+      c = row
+      column_name.split('.').each {|n| c = c[n] if c}
+      c.nil? ? '' : c
+    end 
+    
   end
 end  
 

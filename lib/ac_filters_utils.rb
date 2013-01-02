@@ -76,7 +76,7 @@ def parse_conditions(parsed_filter, system_params)
   end
   
   conditions[0] = conditions[0].join(' and ')
-  conditions.flatten
+  conditions
 end 
 
 def parse_condition(conditions, parsed_filter, filter)
@@ -160,6 +160,10 @@ def fill_with_others(conditions, filled, parsed_filter, filter)
   end
 end
 
+def get_param_by_label(params, label)
+  filter = AcFilter.find(:first, :conditions => ['ac_filter_def_id = ? and label = ?',params['filter_def_id'], label])   
+  'ac_filter_'+filter.id.to_s
+end
 
 module AcFilters  
   def apply_ac_filter(parsed_filter, system_params)

@@ -68,16 +68,19 @@ module PrawnReport
   class SimpleListing < Report
 
     attr_reader :grouping_info
+    alias :super_new_page :new_page
     
     def initialize(report_params = {})
       super(report_params)
       @header_class = PrawnReport::Header001
-      @header_other_pages_class = PrawnReport::Header002       
+      @header_other_pages_class = PrawnReport::Header002
       @footer_class = PrawnReport::Footer001
       @grouping_info = {:last_group_value => nil, 
                         :groups_running => false}
       @filling_colors = ['cccccc', 'ffffff'].cycle
       @current_row = nil
+      @printing_internal = false
+      @data_end = false
     end
     
     #Override line_height to calculate the proper line height for the record
@@ -86,11 +89,22 @@ module PrawnReport
       15
     end
     
+
+    def new_page(print_titles = true)
+      super      
+      draw_group_header if grouped? and @report_params[:group][:header_reprint_new_page] and !last_group_summary?      
+      if print_titles        
+        draw_column_titles unless (!draw_group_column_titles? && !@printing_internal) || last_group_summary?
+      end
+    end
+
     protected
     
     def draw_internal
-      draw_column_titles unless grouped?
+      @printing_internal = true
+      draw_column_titles unless draw_group_column_titles?
       detail_name = @report_params[:detail_name] || 'items'
+      @data_end = false
       @data[detail_name].each do |row|
         @current_row = row
         run_groups(row) if grouped?
@@ -103,7 +117,9 @@ module PrawnReport
         line_break(line_height-4)
         run_totals(row)
       end
+      @data_end = true
       draw_group_summary if @data[detail_name].count > 0
+      @printing_internal = false
     end
     
     def render_line(row)
@@ -125,7 +141,7 @@ module PrawnReport
       @report_params[:columns].each do |c|
         width = c[:width] || 60
         align = c[:align] || :left
-        text(c[:title].to_s, width, :font_size => 12, :style => :bold, :align => align) 
+        text(c[:title].to_s, width, :font_size => c[:font_size] || 12, :style => :bold, :align => align) 
         space(3)
       end      
       line_break(13)
@@ -157,13 +173,6 @@ module PrawnReport
       end
       r
     end
-    
-    def get_raw_field_value(row, column_name)
-      c = row
-      column_name.split('.').each {|n| c = c[n] if c}
-      c.nil? ? '' : c
-    end
-    
     def second_pass
       1.upto(@num_pages) do |i|
         @pdf.go_to_page(i)
@@ -181,27 +190,37 @@ module PrawnReport
         if(@grouping_info[:groups_running] &&
                      @grouping_info[:last_group_value] != group_value)
           draw_group_summary
-          new_page if params[:group][:new_page]
+          new_page(false) if params[:group][:new_page]
         end
         @grouping_info[:last_group_value] = group_value
         @grouping_info[:groups_running] = true
         draw_group_header
-        draw_column_titles
+        draw_column_titles if draw_group_column_titles?
         reset_group_totals
       end
     end
     
     def draw_column_titles
-      new_page unless fits?(15)
+      new_page(false) unless fits?(30)
       if @report_params[:field]
         render_one_column_title
       elsif @report_params[:columns]
         render_multi_column_title
       end
     end
-    
+
     def grouped?
       params[:group]
     end
+
+    def draw_group_column_titles?
+      ( params[:group].nil? ? false : (params[:group][:print_group_column_title].nil? ? true :
+          params[:group][:print_group_column_title]))
+    end
+
+    def last_group_summary?
+      @data_end
+    end
+
   end
 end
