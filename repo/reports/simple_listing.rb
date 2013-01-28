@@ -64,7 +64,6 @@ module PrawnReport
   class SimpleListing < Listing
 
     attr_reader :grouping_info
-    alias :super_new_page :new_page
     
     def initialize(report_params = {})
       super(report_params)
@@ -106,6 +105,7 @@ module PrawnReport
     end
 
     def new_page(print_titles = true)
+      super(print_titles)
       draw_group_header if grouped? and @report_params[:group][:header_reprint_new_page] and !last_group_summary?
       if print_titles
         draw_column_titles unless (!draw_group_column_titles? && !@printing_internal) || last_group_summary?
@@ -123,10 +123,8 @@ module PrawnReport
 
     def before_render_line
       super
-      run_groups(row) if grouped?
+      run_groups(@current_row) if grouped?
     end
-
-
 
   end
 end
