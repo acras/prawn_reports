@@ -18,7 +18,11 @@ class AcFilterDef < ActiveRecord::Base
   def include_param
     read_marshal_attribute(:include_param)
   end
-  
+
+  def has_sql_query?
+    sql_query.to_s != ''
+  end
+
   protected
   
   def write_marshal_attribute(name, value)
@@ -29,6 +33,6 @@ class AcFilterDef < ActiveRecord::Base
     value = read_attribute name
     value.nil? ? nil : Marshal.load(value)
   end
-  
-  
+
+
 end

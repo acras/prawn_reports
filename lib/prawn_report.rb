@@ -15,6 +15,7 @@ require "ac_filters_utils"
 require File.expand_path(File.dirname(__FILE__) + "/../repo/bands/headers/header_001.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../repo/bands/footers/footer_001.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../repo/reports/simple_listing.rb")
+require File.expand_path(File.dirname(__FILE__) + "/../repo/reports/column_group.rb")
 
 # Rails 3 compatibility
 require 'prawn_report/engine' if ((defined? Rails) and (Rails::version >= '3.0.0'))

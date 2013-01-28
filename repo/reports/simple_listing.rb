@@ -1,10 +1,6 @@
 #coding: utf-8
 
-require File.expand_path(File.dirname(__FILE__) + "/../../lib/report.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../bands/headers/header_001.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../bands/headers/header_002.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../bands/footers/footer_001.rb")
-
+require File.expand_path(File.dirname(__FILE__) + "/listing.rb")
 
 module PrawnReport
   #Generates a listing report with or without multiple columns.
@@ -65,123 +61,19 @@ module PrawnReport
   #* Footer class: PrawnReport::Footer001
 
 
-  class SimpleListing < Report
+  class SimpleListing < Listing
 
     attr_reader :grouping_info
     alias :super_new_page :new_page
     
     def initialize(report_params = {})
       super(report_params)
-      @header_class = PrawnReport::Header001
-      @header_other_pages_class = PrawnReport::Header002
-      @footer_class = PrawnReport::Footer001
-      @grouping_info = {:last_group_value => nil, 
+      @grouping_info = {:last_group_value => nil,
                         :groups_running => false}
-      @filling_colors = ['cccccc', 'ffffff'].cycle
-      @current_row = nil
-      @printing_internal = false
-      @data_end = false
-    end
-    
-    #Override line_height to calculate the proper line height for the record
-    #The current record can be accessed via the property @current_row
-    def line_height
-      15
-    end
-    
-
-    def new_page(print_titles = true)
-      super      
-      draw_group_header if grouped? and @report_params[:group][:header_reprint_new_page] and !last_group_summary?      
-      if print_titles        
-        draw_column_titles unless (!draw_group_column_titles? && !@printing_internal) || last_group_summary?
-      end
     end
 
     protected
-    
-    def draw_internal
-      @printing_internal = true
-      draw_column_titles unless draw_group_column_titles?
-      detail_name = @report_params[:detail_name] || 'items'
-      @data_end = false
-      @data[detail_name].each do |row|
-        @current_row = row
-        run_groups(row) if grouped?
-        new_page unless fits?(line_height)
-        @x = 0
-        @pdf.fill_color @filling_colors.next
-        @pdf.fill_rectangle [x,y], max_width, line_height
-        @pdf.fill_color '000000'
-        render_line(row)
-        line_break(line_height-4)
-        run_totals(row)
-      end
-      @data_end = true
-      draw_group_summary if @data[detail_name].count > 0
-      @printing_internal = false
-    end
-    
-    def render_line(row)
-      if @report_params[:field]
-        render_one_column_line(row)
-      elsif @report_params[:columns]
-        render_multi_column_line(row)
-      end
-    end
-    
-    def  render_one_column_title
-      if @report_params[:title]
-        text(@report_params[:title], @max_width, :font_size => 12, :style => :bold)
-        line_break(13)
-      end
-    end
-    
-    def render_multi_column_title
-      @report_params[:columns].each do |c|
-        width = c[:width] || 60
-        align = c[:align] || :left
-        text(c[:title].to_s, width, :font_size => c[:font_size] || 12, :style => :bold, :align => align) 
-        space(3)
-      end      
-      line_break(13)
-    end
-    
-    def render_one_column_line(row)
-      text(row[@report_params[:field]], 100, :font_size => 12)
-    end
-    
-    def render_multi_column_line(row)
-      @report_params[:columns].each do |c|
-        width = c[:width] || 60
-        formatter = c[:formatter] || :none
-        raw_value = get_raw_field_value(row, c[:name].to_s)
-        formatter_options = build_formatter_options(formatter, c)
-        formatted_text = format(raw_value, formatter, formatter_options)
-        align = c[:align] || :left
-        font_size = c[:font_size] || 12
-        text(formatted_text, width, :font_size => font_size, :align => align)
-        space(3)
-      end      
-    end   
-    
-    #This function will build the options to be passed to the specific formatter
-    def build_formatter_options(formatter, column_def)
-      r = {}
-      if formatter == :function
-        r[:formatter_function] = column_def[:formatter_function]
-      end
-      r
-    end
-    def second_pass
-      1.upto(@num_pages) do |i|
-        @pdf.go_to_page(i)
-        @pdf.move_cursor_to(10)
-        @x = 0
-        text("Página #{@pdf.page_number}/#{@pdf.page_count}", @max_width, :align => :right)
-      end
-    end
-    
+
     def run_groups(row)
       group_value = get_raw_field_value(row, params[:group][:field])
       start_new_group = !@grouping_info[:groups_running]
@@ -199,15 +91,6 @@ module PrawnReport
         reset_group_totals
       end
     end
-    
-    def draw_column_titles
-      new_page(false) unless fits?(30)
-      if @report_params[:field]
-        render_one_column_title
-      elsif @report_params[:columns]
-        render_multi_column_title
-      end
-    end
 
     def grouped?
       params[:group]
@@ -221,6 +104,29 @@ module PrawnReport
     def last_group_summary?
       @data_end
     end
+
+    def new_page(print_titles = true)
+      draw_group_header if grouped? and @report_params[:group][:header_reprint_new_page] and !last_group_summary?
+      if print_titles
+        draw_column_titles unless (!draw_group_column_titles? && !@printing_internal) || last_group_summary?
+      end
+    end
+
+    def before_draw_lines
+      super
+      draw_column_titles unless draw_group_column_titles?
+    end
+
+    def after_draw_lines
+      draw_group_summary if @data[@detail_name].count > 0
+    end
+
+    def before_render_line
+      super
+      run_groups(row) if grouped?
+    end
+
+
 
   end
 end
