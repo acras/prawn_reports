@@ -18,9 +18,6 @@
       <change type="DELETED" beforePath="P:\prawn_reports\generators\prawn_report_install\templates\20120303104431_change_filled_criteria_unfilled_criteria.rb" afterPath="" />
       <change type="DELETED" beforePath="P:\prawn_reports\generators\prawn_report_install\templates\20120316162712_add_filled_criteria_to_options.rb" afterPath="" />
       <change type="DELETED" beforePath="P:\prawn_reports\generators\prawn_report_install\templates\20120323124446_add_fields_to_filter.rb" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prawn_report.gemspec" afterPath="$PROJECT_DIR$/prawn_report.gemspec" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/repo/reports/listing.rb" afterPath="$PROJECT_DIR$/repo/reports/listing.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/repo/reports/simple_listing.rb" afterPath="$PROJECT_DIR$/repo/reports/simple_listing.rb" />
     </list>
     <ignored path="prawn_reports.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -197,7 +194,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
