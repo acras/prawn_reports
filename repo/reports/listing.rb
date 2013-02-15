@@ -83,10 +83,12 @@ module PrawnReport
 
     def render_multi_column_title
       @report_params[:columns].each do |c|
-        width = c[:width] || 60
-        align = c[:align] || :left
-        text(c[:title].to_s, width, :font_size => c[:font_size] || 12, :style => :bold, :align => align)
-        space(3)
+        unless c[:formatter] == :invisible
+          width = c[:width] || 60
+          align = c[:align] || :left
+          text(c[:title].to_s, width, :font_size => c[:font_size] || 12, :style => :bold, :align => align)
+          space(3)
+        end
       end
       line_break(13)
     end
@@ -97,15 +99,17 @@ module PrawnReport
 
     def render_multi_column_line(row)
       @report_params[:columns].each do |c|
-        width = c[:width] || 60
-        formatter = c[:formatter] || :none
-        raw_value = get_raw_field_value(row, c[:name].to_s)
-        formatter_options = build_formatter_options(formatter, c)
-        formatted_text = format(raw_value, formatter, formatter_options)
-        align = c[:align] || :left
-        font_size = c[:font_size] || 12
-        text(formatted_text, width, :font_size => font_size, :align => align)
-        space(3)
+        unless c[:formatter] == :invisible
+          width = c[:width] || 60
+          formatter = c[:formatter] || :none
+          raw_value = get_raw_field_value(row, c[:name].to_s)
+          formatter_options = build_formatter_options(formatter, c)
+          formatted_text = format(raw_value, formatter, formatter_options)
+          align = c[:align] || :left
+          font_size = c[:font_size] || 12
+          text(formatted_text, width, :font_size => font_size, :align => align)
+          space(3)
+        end
       end
     end
 

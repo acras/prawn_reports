@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{prawn_report}
-  s.version = "1.8.4"
+  s.version = "1.9.0"
   s.date = %q{2013-01-28}
    s.authors = ["Ricardo Acras" "Egon Hilgenstieler" "Juliano Andrade"]
   s.email = %q{ricardo@acras.com.br julianoch@gmail.com egon@acras.com.br}
