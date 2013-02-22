@@ -54,9 +54,9 @@ module PrawnReport
       if !value.nil? && value != ''
         if (formatter == :currency)
           if value < 0
-            '-'+((value.to_i*-1).to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % (value.abs * 100 % 100))
+            '-'+((value.to_i*-1).to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % ((value.abs * 100).round % 100))
           else
-            (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % (value * 100 % 100))
+            (value.to_i.to_s.reverse.gsub(/...(?=.)/,'\&.').reverse) + ',' + ('%02d' % ((value * 100).round % 100))
           end
         elsif (formatter == :date)
           value.to_time.strftime('%d/%m/%Y')
