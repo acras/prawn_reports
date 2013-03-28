@@ -41,9 +41,6 @@ module PrawnReport
     def before_render_line
       new_page unless fits?(line_height)
       @x = 0
-      @pdf.fill_color @filling_colors.next
-      @pdf.fill_rectangle [x,y], max_width, line_height
-      @pdf.fill_color '000000'
     end
 
     def after_render_line
@@ -67,6 +64,10 @@ module PrawnReport
     end
 
     def render_line(row)
+      @pdf.fill_color @filling_colors.next
+      @pdf.fill_rectangle [x,y], max_width, line_height
+      @pdf.fill_color '000000'
+
       if @report_params[:field]
         render_one_column_line(row)
       elsif @report_params[:columns]
