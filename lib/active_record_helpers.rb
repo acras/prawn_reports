@@ -103,7 +103,7 @@ class ActiveRecordYAMLSerializer
         r += l
       end
     else
-      r += '"' + s.to_s + '"'
+      r += '"' + s.to_s.gsub('"', '\"') + '"'
     end
     r + "\n"
   end
