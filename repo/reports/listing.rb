@@ -140,5 +140,55 @@ module PrawnReport
         render_multi_column_title
       end
     end
+
+    def draw_csv(data)
+      @data = data
+
+      before_draw
+
+      if @report_params[:field]
+        @report_params[:columns] = [@report_params[:field]]
+      end
+
+      CSV.generate do |csv|
+        csv << draw_column_titles_csv(csv)
+        @data[@detail_name].each do |row|
+          @current_row = row
+          before_render_line
+          csv << render_line_csv(@current_row, csv)
+          after_render_line
+        end
+      end
+    end
+
+    def render_line_csv(row, csv)
+      fields = []
+      @report_params[:columns].each do |c|
+        unless c[:formatter] == :invisible
+          formatter = c[:formatter] || :none
+          raw_value = get_raw_field_value(row, c[:name].to_s)
+          formatter_options = build_formatter_options(formatter, c)
+          # exceção é currency, deixamos o número no formato cru para o excel entender
+          if formatter == :currency
+            formatted_text = raw_value.to_s.gsub(".", ",")
+          else
+            formatted_text = format(raw_value, formatter, formatter_options)
+          end
+          fields << formatted_text
+        end
+      end
+      fields
+    end
+
+    def draw_column_titles_csv(csv)
+      fields = []
+      @report_params[:columns].each do |c|
+        unless c[:formatter] == :invisible
+          fields << c[:title].to_s
+        end
+      end
+      fields
+    end
   end
+
 end

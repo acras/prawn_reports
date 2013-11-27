@@ -1,6 +1,7 @@
 #coding: utf-8
 
 require File.expand_path(File.dirname(__FILE__) + "/listing.rb")
+require 'csv'
 
 module PrawnReport
   #Generates a listing report with or without multiple columns.
@@ -71,6 +72,7 @@ module PrawnReport
                         :groups_running => false}
     end
 
+
     protected
 
     def run_groups(row)
@@ -124,6 +126,24 @@ module PrawnReport
     def before_render_line
       super
       run_groups(@current_row) if grouped?
+    end
+
+    def draw_column_titles_csv(csv)
+      # mostra agrupamento antes do resto
+      if grouped?
+        [@report_params[:group][:title].to_s] + super(csv)
+      else
+        super(csv)
+      end
+    end
+
+    def render_line_csv(row, csv)
+      # mostra agrupamento antes do resto
+      if grouped?
+        [get_raw_field_value(row, @report_params[:group][:field].to_s)] + super(row,csv)
+      else
+        super(row, csv)
+      end
     end
 
   end

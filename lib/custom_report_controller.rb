@@ -33,15 +33,25 @@ module PrawnReportController
       report_content = rec.pr_serialize(get_pr_serialization_params)
       report = get_pr_report_class.new(get_pr_report_params)
       report.report_params[:filters] = get_pr_filters
-      report_content = report.draw(report_content.get_yaml)
 
       fn = get_pr_suggested_filename
-      
-      if fn
-        send_data(report_content, :filename => fn)        
-      else
-        send_data(report_content, :disposition => 'inline', :type => 'application/pdf')
+
+      respond_to do |format|
+        format.pdf do
+          report_content = report.draw(report_content.get_yaml)
+          if fn
+            send_data(report_content, :filename => "#{fn}.pdf")
+          else
+            send_data(report_content, :disposition => 'inline', :type => 'application/pdf')
+          end
+        end
+        format.csv do
+          report_content = report.draw_csv(report_content.get_yaml)
+          fn ||= "report"
+          send_data(report_content, :filename => "#{fn}.csv")
+        end
       end
+
     end
   end
   

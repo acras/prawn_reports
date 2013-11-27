@@ -27,9 +27,8 @@ module PrawnReport
       @grouping_context_field = report_params[:grouping_context_field]
     end
 
-    def draw(data)
-      data = traverse_data(data)
-      super(data)
+    def before_draw
+      @data = traverse_data(@data)
     end
 
     protected

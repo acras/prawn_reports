@@ -70,6 +70,8 @@ module PrawnReport
     
     def draw(data)
       @data = data
+
+      before_draw
       
       draw_header_first_page
       draw_internal
@@ -80,6 +82,9 @@ module PrawnReport
       
       @pdf.close_and_stroke
       @pdf.render
+    end
+
+    def before_draw
     end
     
     def new_page(print_titles = true)
