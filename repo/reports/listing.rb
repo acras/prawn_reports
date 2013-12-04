@@ -4,6 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../lib/report.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../bands/headers/header_001.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../bands/headers/header_002.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../bands/footers/footer_001.rb")
+require 'iconv'
 
 module PrawnReport
   class Listing < Report
@@ -150,7 +151,7 @@ module PrawnReport
         @report_params[:columns] = [@report_params[:field]]
       end
 
-      CSV.generate do |csv|
+      str = CSV.generate(:col_sep => ";", :encoding => 'utf-8') do |csv|
         csv << draw_column_titles_csv(csv)
         @data[@detail_name].each do |row|
           @current_row = row
@@ -159,6 +160,7 @@ module PrawnReport
           after_render_line
         end
       end
+      Iconv.conv('latin1', 'utf-8', str)
     end
 
     def render_line_csv(row, csv)
