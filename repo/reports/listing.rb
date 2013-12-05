@@ -170,9 +170,13 @@ module PrawnReport
           formatter = c[:formatter] || :none
           raw_value = get_raw_field_value(row, c[:name].to_s)
           formatter_options = build_formatter_options(formatter, c)
-          # exceção é currency, deixamos o número no formato cru para o excel entender
+          # exceção é currency, deixamos o número sem separador de milhares
           if formatter == :currency
-            formatted_text = raw_value.to_s.gsub(".", ",")
+            if raw_value < 0
+              formatted_text = raw_value.to_i.to_s + ',' + ('%02d' % ((raw_value.abs * 100).round % 100))
+            else
+              formatted_text = raw_value.to_i.to_s + ',' + ('%02d' % ((raw_value * 100).round % 100))
+            end
           else
             formatted_text = format(raw_value, formatter, formatter_options)
           end
