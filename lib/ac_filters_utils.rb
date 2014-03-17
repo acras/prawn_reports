@@ -173,7 +173,7 @@ module AcFilters
     if filter_def.has_sql_query?
       sql_to_execute = ActiveRecord::Base.send(:sanitize_sql_array, conditions)
       r = []
-      ActiveRecord::Base.connection.instance_exec(sql_to_execute).each(as: :hash) {|i| r << i}
+      ActiveRecord::Base.connection.instance_exec(sql_to_execute).each(:as => :hash) {|i| r << i}
     else
       find_params[:select] = filter_def.select_sql.to_s unless filter_def.select_sql.nil?
       find_params[:order] = filter_def.order_sql.to_s unless filter_def.order_sql.nil?
