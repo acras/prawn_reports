@@ -3,6 +3,8 @@ class AcFilterDef < ActiveRecord::Base
   has_many :ac_filters, :dependent => :destroy
   accepts_nested_attributes_for :ac_filters
 
+  has_many :report_templates
+
   def joins_param=(value)
     write_marshal_attribute(:joins_param, value)
   end
