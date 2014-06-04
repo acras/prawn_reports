@@ -1,10 +1,9 @@
 class AcFilterSerializer < ActiveModel::Serializer
-  attributes :id, :data_type, :label, :target_model, :target_field, :required, :required_from, :required_to, :report_id, :query_user
+  embed :ids, :include => true
 
-  #Assumes that there is only one report to one ac_filter_def
-  def report_id
-    object.ac_filter_def.report_templates.first.try(:id)
-  end
+  attributes :id, :data_type, :label, :target_model, :target_field, :required, :required_from, :required_to, :query_user
 
+  has_one :ac_filter_def, :root => 'ac_filter_defs'
+  has_many :ac_filter_options
 end
 

@@ -22,7 +22,7 @@ class ReportTemplatesController < ApplicationController
         }
       )
       end
-      format.json { render :json => @templates, :root => 'reports' }
+      format.json { render :json => @templates }
     end
 
   end

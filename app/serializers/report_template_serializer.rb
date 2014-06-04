@@ -1,8 +1,9 @@
 class ReportTemplateSerializer < ActiveModel::Serializer
   embed :ids, :include => true
 
-  attributes :id, :name, :description, :allow_csv
+  attributes :id, :name, :description, :allow_csv, :ac_filter_def_id, :controller_name
 
-  has_many :filters, :root => 'report_filters'
+  has_one :ac_filter_def, :root => 'ac_filter_defs'
+
 end
 
