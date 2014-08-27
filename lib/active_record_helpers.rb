@@ -129,6 +129,7 @@ class ActiveRecordYAMLSerializer
   
   def serialize_belongs_tos(rec, first_line, params)
     r = ''
+    params.symbolize_keys!
     if params[:include_all_belongs_to] == true
       rec.class.reflect_on_all_associations(:belongs_to).collect do |a|
         r += render_indent(first_line)

@@ -18,6 +18,7 @@ puts "FIM"
 
 puts "Iniciando importação dos reports"
 Dir.glob("#{Rails.root}/db/reports/*.yml").each do |f|
+  puts "Parsing file: #{f}"
   params = YAML::load(File.open(f, 'r'))
   if params["filter_name"]
     f = AcFilterDef.find_by_name(params.delete("filter_name"))
