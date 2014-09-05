@@ -28,6 +28,7 @@ module PrawnReportController
     @filters = []
     rec = get_pr_report_data
     if rec.nil? || (rec.is_a?(Array) && rec.count == 0)
+      cookies[:fileDownload] = true
       render :nothing => true, :status => :no_content
     else
       report_content = rec.pr_serialize(get_pr_serialization_params)
