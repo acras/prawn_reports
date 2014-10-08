@@ -100,10 +100,10 @@ class ActiveRecordYAMLSerializer
       r += "|-\n"
       s.lines.each do |l|
         r += '  ' * (@indent_level + 1)
-        r += l
+        r += l.to_s.gsub('\\', '\\\\\\').gsub('"', '\"')
       end
     else
-      r += '"' + s.to_s.gsub('"', '\"') + '"'
+      r += '"' + s.to_s.gsub('\\', '\\\\\\').gsub('"', '\"') + '"'
     end
     r + "\n"
   end
