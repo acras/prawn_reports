@@ -172,7 +172,9 @@ module PrawnReport
           formatter_options = build_formatter_options(formatter, c)
           # exceção é currency, deixamos o número sem separador de milhares
           if formatter == :currency
-            if raw_value < 0
+            if raw_value.blank?
+              formatted_text = ''
+            elsif raw_value < 0
               formatted_text = raw_value.to_i.to_s + ',' + ('%02d' % ((raw_value.abs * 100).round % 100))
             else
               formatted_text = raw_value.to_i.to_s + ',' + ('%02d' % ((raw_value * 100).round % 100))
