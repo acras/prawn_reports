@@ -3,7 +3,7 @@
 def parse_ac_filters(params)
   parsed_filters = {}
   parsed_filters['filter_def_id'] = params['filter_def_id'].to_i
-  params.each_pair do |k,v|  
+  params.each_pair do |k,v|
     md = /^ac_filter_(\d+)_(.+)/.match(k)
     if md
       filter_id = md[1]
@@ -26,14 +26,14 @@ def get_ac_filters_applied(params, ac_filter_def)
       if ['text', 'options'].include? f.data_type
         val = pf['filter_value']
       elsif ['period', 'timezone_period'].include?(f.data_type)
-        if (!pf['from_date'].empty?) && (!pf['to_date'].empty?) 
+        if (!pf['from_date'].empty?) && (!pf['to_date'].empty?)
           val = "#{Date.parse(pf['from_date']).strftime('%d/%m/%Y')} até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
         elsif !pf['from_date'].empty?
           val = "Desde #{Date.parse(pf['from_date']).strftime('%d/%m/%Y')}"
         elsif
           val = "Até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
         end
-      elsif f.data_type == 'autocomplete'
+      elsif ['autocomplete', 'storecombo'].include?(f.data_type)
         val = Kernel.const_get(f.target_model).find(pf['filter_value']).send(f.target_field)
       end
       r << [f.label, val]
@@ -63,7 +63,7 @@ def parse_conditions(parsed_filter, system_params)
   filter_def = AcFilterDef.find(parsed_filter['filter_def_id'])
   conditions = []
   conditions[0] = ['1=1']
-  
+
   filter_def.ac_filters.each do |f|
     if f.query_user?
       parse_condition(conditions, parsed_filter, f)
@@ -74,14 +74,14 @@ def parse_conditions(parsed_filter, system_params)
       conditions[0] << f.filled_criteria
     end
   end
-  
+
   conditions[0] = conditions[0].join(' and ')
   conditions
-end 
+end
 
 def parse_condition(conditions, parsed_filter, filter)
   filled = parsed_filter[filter.id]['is_filled'] == 'true'
-  
+
   if filter.data_type == 'checkbox'
     fill_with_checkbox(conditions, filled, parsed_filter, filter)
   elsif filter.data_type == 'options'
@@ -161,11 +161,11 @@ def fill_with_others(conditions, filled, parsed_filter, filter)
 end
 
 def get_param_by_label(params, label)
-  filter = AcFilter.find(:first, :conditions => ['ac_filter_def_id = ? and label = ?',params['filter_def_id'], label])   
+  filter = AcFilter.find(:first, :conditions => ['ac_filter_def_id = ? and label = ?',params['filter_def_id'], label])
   'ac_filter_'+filter.id.to_s
 end
 
-module AcFilters  
+module AcFilters
   def apply_ac_filter(parsed_filter, system_params)
     conditions = parse_conditions(parsed_filter, system_params)
     find_params = {:conditions => conditions}
@@ -183,5 +183,5 @@ module AcFilters
       r = find(:all, find_params)
     end
     r
-  end  
+  end
 end
