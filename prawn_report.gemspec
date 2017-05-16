@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = %q{prawn_report}
-  s.version = "1.9.17"
-  s.date = %q{2015-09-14}
+  s.version = "1.10.1"
+  s.date = %q{2017-05-16}
   s.authors = ["Ricardo Acras" "Egon Hilgenstieler" "Juliano Andrade" "Vinicius Cubas Brand"]
   s.email = %q{ricardo@acras.com.br julianoch@gmail.com egon@acras.com.br viniciuscb@gmail.com}
   s.summary = %q{Prawn Report makes it easy to create PDF reports.}
