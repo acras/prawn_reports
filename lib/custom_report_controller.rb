@@ -38,8 +38,8 @@ module PrawnReportController
       fn = get_pr_suggested_filename
 
       respond_to do |format|
+        cookies[:fileDownload] = true
         format.pdf do
-          cookies[:fileDownload] = true
           report_content = report.draw(report_content.get_yaml)
           if fn
             send_data(report_content, :filename => "#{fn}.pdf")
