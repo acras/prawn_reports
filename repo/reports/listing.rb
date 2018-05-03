@@ -156,7 +156,8 @@ module PrawnReport
         @data[@detail_name].each do |row|
           @current_row = row
           before_render_line
-          csv << render_line_csv(@current_row, csv)
+          line = render_line_csv(@current_row, csv)
+          csv << line unless line.nil?
           after_render_line
         end
       end
