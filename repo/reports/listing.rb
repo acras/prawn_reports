@@ -142,7 +142,7 @@ module PrawnReport
       end
     end
 
-    def draw_csv(data)
+    def draw_csv(data, csv_params = {})
       @data = data
 
       before_draw
@@ -151,7 +151,10 @@ module PrawnReport
         @report_params[:columns] = [@report_params[:field]]
       end
 
-      str = CSV.generate(:col_sep => ";", :encoding => 'utf-8') do |csv|
+      csv_params[:col_sep] ||= ';'
+      csv_params[:encoding] ||= 'utf-8'
+
+      str = CSV.generate(csv_params) do |csv|
         csv << draw_column_titles_csv(csv)
         @data[@detail_name].each do |row|
           @current_row = row
