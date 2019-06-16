@@ -34,6 +34,7 @@ module PrawnReportController
       report_content = rec.pr_serialize(get_pr_serialization_params)
       report = get_pr_report_class.new(get_pr_report_params)
       report.report_params[:filters] = get_pr_filters
+      report.report_params[:filter_params]  = parse_ac_filters(params)
 
       fn = get_pr_suggested_filename
 

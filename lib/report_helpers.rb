@@ -51,7 +51,7 @@ module PrawnReport
     end
 
     def format(value, formatter, options = {})
-      if !value.nil? && value != ''
+      if (formatter == :function) || (!value.nil? && value != '')
         if (formatter == :currency)
           value = value.round(2)
           if value < 0
