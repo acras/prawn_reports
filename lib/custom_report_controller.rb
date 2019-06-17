@@ -11,6 +11,7 @@ module PrawnReportController
   end
 
   def get_pr_suggested_filename; end
+  def fill_report_params; end
 
   def get_pr_report_params
     @pr_report_params || {}
@@ -35,6 +36,7 @@ module PrawnReportController
       report = get_pr_report_class.new(get_pr_report_params)
       report.report_params[:filters] = get_pr_filters
       report.report_params[:filter_params]  = parse_ac_filters(params)
+      fill_report_params(report)
 
       fn = get_pr_suggested_filename
 
