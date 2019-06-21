@@ -11,7 +11,7 @@ module PrawnReportController
   end
 
   def get_pr_suggested_filename; end
-  def fill_report_params; end
+  def fill_report_params(report); end
 
   def get_pr_report_params
     @pr_report_params || {}
