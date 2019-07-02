@@ -34,7 +34,11 @@ def get_ac_filters_applied(params, ac_filter_def)
           val = "Até #{Date.parse(pf['to_date']).strftime('%d/%m/%Y')}"
         end
       elsif ['autocomplete', 'storecombo'].include?(f.data_type)
-        val = Kernel.const_get(f.target_model).find(pf['filter_value']).send(f.target_field)
+        if f.remote_target_model
+          val = Kernel.const_get(f.remote_target_model).find(pf['filter_value']).send(f.target_field)
+        else
+          val = Kernel.const_get(f.target_model).find(pf['filter_value']).send(f.target_field)
+        end
       end
       r << [f.label, val]
     end
