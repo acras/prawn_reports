@@ -172,19 +172,19 @@ end
 module AcFilters
   def apply_ac_filter(parsed_filter, system_params)
     conditions = parse_conditions(parsed_filter, system_params)
-    find_params = {:conditions => conditions}
+    query = where(*conditions)
     filter_def = AcFilterDef.find(parsed_filter['filter_def_id'])
     if filter_def.has_sql_query?
       sql_to_execute = ActiveRecord::Base.send(:sanitize_sql_array, conditions)
       r = []
       ActiveRecord::Base.connection.instance_exec(sql_to_execute).each(:as => :hash) {|i| r << i}
     else
-      find_params[:select] = filter_def.select_sql.to_s unless filter_def.select_sql.nil?
-      find_params[:order] = filter_def.order_sql.to_s unless filter_def.order_sql.nil?
-      find_params[:joins] = filter_def.joins_param unless filter_def.joins_param.nil?
-      find_params[:include] = filter_def.include_param unless filter_def.include_param.nil?
-      find_params[:group] = filter_def.group_param unless filter_def.group_param.nil?
-      r = find(:all, find_params)
+      query = query.select(filter_def.select_sql.to_s) unless filter_def.select_sql.nil?
+      query = query.order(filter_def.order_sql.to_s) unless filter_def.order_sql.nil?
+      query = query.joins(filter_def.joins_param) unless filter_def.joins_param.nil?
+      query = query.include(filter_def.include_param) unless filter_def.include_param.nil?
+      query = query.group(filter_def.group_param) unless filter_def.group_param.nil?
+      r = query.all
     end
     r
   end
