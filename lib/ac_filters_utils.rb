@@ -182,7 +182,7 @@ module AcFilters
       query = query.select(filter_def.select_sql.to_s) unless filter_def.select_sql.nil?
       query = query.order(filter_def.order_sql.to_s) unless filter_def.order_sql.nil?
       query = query.joins(filter_def.joins_param) unless filter_def.joins_param.nil?
-      query = query.include(filter_def.include_param) unless filter_def.include_param.nil?
+      query = query.includes(filter_def.include_param) unless filter_def.include_param.nil?
       query = query.group(filter_def.group_param) unless filter_def.group_param.nil?
       r = query.all
     end
